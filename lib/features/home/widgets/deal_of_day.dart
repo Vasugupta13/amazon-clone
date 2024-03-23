@@ -18,6 +18,7 @@ class _DealOfDayState extends ConsumerState<DealOfDay> {
   @override
   void initState() {
     super.initState();
+
     Future.delayed(const Duration(seconds: 1)).then((value) => fetchDealOfDay());
   }
 

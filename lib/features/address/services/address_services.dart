@@ -48,7 +48,7 @@ class AddressServices {
   }
 
   // get all the products
-  void placeOrder({
+  Future<void> placeOrder({
     required BuildContext context,
     required String address,
     required num totalSum,

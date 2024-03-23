@@ -56,7 +56,7 @@ class PaymentService extends StateNotifier<CheckStatusState>{
       if(response.statusCode == 200){
         Map<String, dynamic> resData = json.decode(response.body);
         var statusResponse = CheckStatusModel.fromJson(resData);
-        await Future.delayed(const Duration(seconds: 300));
+        await Future.delayed(const Duration(seconds: 3));
         state = state.copyWith(loading: false,checkStatusModel: statusResponse);
         return statusResponse;
       }else {

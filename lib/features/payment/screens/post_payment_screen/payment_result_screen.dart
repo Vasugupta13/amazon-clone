@@ -1,29 +1,77 @@
-import 'package:amazon_clone/constants/global_variables.dart';
-import 'package:amazon_clone/features/payment/model/check_status_model.dart';
+import 'package:amazon_clone/common/widgets/bottom_nav.dart';
+import 'package:amazon_clone/features/address/services/address_services.dart';
 import 'package:amazon_clone/features/payment/services/payment_api_service.dart';
+import 'package:amazon_clone/providers/user_provider.dart';
 import 'package:amazon_clone/res/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class PaymentResult extends ConsumerStatefulWidget {
-  final String merchantTransactionId;
-  const PaymentResult( {super.key, required this.merchantTransactionId,});
+  final num amount;
+  final String? merchantTransactionId;
+  const PaymentResult({super.key,  this.merchantTransactionId,required this.amount});
 
   @override
   ConsumerState<PaymentResult> createState() => _PaymentResultState();
 }
 
 class _PaymentResultState extends ConsumerState<PaymentResult> {
-  void onSuccessNavigate(){
-
+  String success = '';
+  bool isSuccess = false;
+  // Future<void> onSuccessNavigate() async {
+  //
+  //  Future.delayed(const Duration(seconds: 3), (){
+  //    ref.read(addressControllerProvider).placeOrder(
+  //      context: context,
+  //      address: 'addressToBeUsed',
+  //      totalSum: widget.amount,
+  //    );
+  //  }).then((value) => Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_)=> const BottomNav()), (route) => false));
+  // }
+  // @override
+  // void didUpdateWidget(covariant PaymentResult oldWidget) {
+  //   super.didUpdateWidget(oldWidget);
+  //   final paymentControllerState = ref.watch(paymentControllerProvider);
+  //   if (paymentControllerState.checkStatusModel!.code == "PAYMENT_SUCCESS") {
+  //     onSuccessNavigate();
+  //   }
+  // }
+  void initCall() async {
+    if(widget.merchantTransactionId == null){
+        isSuccess = false;
+        Future.delayed(const Duration(seconds: 3), (){
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_)=> const BottomNav()), (route) => false);
+        });
+    }else {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp){
+      String addressToBeUsed = ref.read(userProvider).address;
+      ref.read(paymentControllerProvider.notifier).checkStatus(widget.merchantTransactionId!).then((value) =>
+      success = ref.watch(paymentControllerProvider).checkStatusModel!.code!
+      ).then((value) => {
+        isSuccess = true,
+        if(value == "PAYMENT_SUCCESS"){
+          Future.delayed(const Duration(seconds: 3), (){
+            ref.read(addressControllerProvider).placeOrder(
+              context: context,
+              address: addressToBeUsed,
+              totalSum: widget.amount,
+            ).then((value) =>  Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_)=> const BottomNav()), (route) => false));
+          })
+        }else{
+          isSuccess = false,
+          Future.delayed(const Duration(seconds: 3), (){
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_)=> const BottomNav()), (route) => false);
+          })
+        }
+      });
+    });
+    }
   }
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp){
-      ref.read(paymentControllerProvider.notifier).checkStatus(widget.merchantTransactionId);
-    });
+    initCall();
   }
   @override
   Widget build(BuildContext context) {
@@ -49,7 +97,7 @@ class _PaymentResultState extends ConsumerState<PaymentResult> {
                 ],
               )
            }
-            else if (paymentControllerState.checkStatusModel!.code == "PAYMENT_SUCCESS") ...{
+            else if (isSuccess) ...{
               const Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
