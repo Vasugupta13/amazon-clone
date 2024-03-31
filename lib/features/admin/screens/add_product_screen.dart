@@ -188,7 +188,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                 CustomButton(
                   text: 'Sell',
                   onTap:() {
-                    print('sell : ${ref.watch(userProvider).token}');
+                    print('sell : ${ref.watch(userControllerProvider).token}');
                     sellProduct();
                   },
                   color: GlobalVariables.secondaryColor,

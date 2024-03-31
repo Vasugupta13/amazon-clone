@@ -9,7 +9,7 @@ import 'package:amazon_clone/constants/utils.dart';
 import 'package:amazon_clone/model/user.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-final userControllerProvider = Provider((ref) => AuthService(ref: ref));
+final authControllerProvider = Provider((ref) => AuthService(ref: ref));
 class AuthService {
   final Ref _ref;
 
@@ -83,7 +83,7 @@ class AuthService {
             if (!context.mounted) {
               return;
             }
-            _ref.read(userProvider.notifier).setUser(response.body);
+            _ref.read(userControllerProvider.notifier).setUser(response.body);
             await prefs.setString(
                 'x-auth-token', jsonDecode(response.body)['token']);
             if (!context.mounted) {
@@ -130,7 +130,7 @@ class AuthService {
         if (!context.mounted) {
           return;
         }
-        _ref.read(userProvider.notifier).setUser(userRes.body);
+        _ref.read(userControllerProvider.notifier).setUser(userRes.body);
       }
     } catch (e) {
       debugPrint('$e');

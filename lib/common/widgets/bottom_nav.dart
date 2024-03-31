@@ -1,6 +1,7 @@
 import 'package:amazon_clone/constants/global_variables.dart';
 import 'package:amazon_clone/features/account/screens/account_screen.dart';
 import 'package:amazon_clone/features/cart/screens/cart_screen.dart';
+import 'package:amazon_clone/features/cart/services/cart_services.dart';
 import 'package:amazon_clone/features/home/screens/home_screen.dart';
 import 'package:amazon_clone/providers/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -14,8 +15,8 @@ class BottomNav extends ConsumerStatefulWidget {
   @override
   ConsumerState<BottomNav> createState() => _BottomNavState();
 }
-
 class _BottomNavState extends ConsumerState<BottomNav> {
+  late final controller = ref.read(cartProductController.notifier);
    int _page = 0;
   double bottomNavBarWidth = 42;
   List<Widget> pages = [
@@ -24,12 +25,19 @@ class _BottomNavState extends ConsumerState<BottomNav> {
     const CartScreen(),
     //ProfileScreen(),
     //CartScreen(),
-  ];  
+  ];
   void updatePage(int page) {
     setState(() {
       _page = page;
     });
   }
+   @override
+   void initState() {
+     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+       controller.getAllItems(context: context);
+     });
+     super.initState();
+   }
   @override
   Widget build(BuildContext context) {
     //final userCartLen = ref.watch(userProvider).cart.length;
@@ -96,8 +104,9 @@ class _BottomNavState extends ConsumerState<BottomNav> {
                 ),
                 badgeContent: Consumer(
                 builder: (context, watch, child) {
-                  final user = watch.watch(userProvider);
-                   return Text('${user.cart.length}');
+                  final product =  watch.watch(cartProductController.select((value) => value.cartItems));
+               //  print(cart.cartItems.length);
+                   return Text('${product.length}');
                   },
                 ),
                 child: const Icon(

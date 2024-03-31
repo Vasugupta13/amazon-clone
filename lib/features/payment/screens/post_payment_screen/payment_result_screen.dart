@@ -45,7 +45,7 @@ class _PaymentResultState extends ConsumerState<PaymentResult> {
         });
     }else {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp){
-      String addressToBeUsed = ref.read(userProvider).address;
+      String addressToBeUsed = ref.read(userControllerProvider).address;
       ref.read(paymentControllerProvider.notifier).checkStatus(widget.merchantTransactionId!).then((value) =>
       success = ref.watch(paymentControllerProvider).checkStatusModel!.code!
       ).then((value) => {

@@ -29,7 +29,7 @@ class _PaymentWebViewState extends ConsumerState<PaymentWebView> {
       setState(() {});
        paymentRes = await ref.read(paymentControllerProvider.notifier).initiatePayment(widget.amount);
        currentUrl = paymentRes!.data!.instrumentResponse!.redirectInfo!.url!;
-       redirectUrl = 'https://amazon-clone-server-vvb5.onrender.com/redirect-url/${paymentRes!.data!.merchantTransactionId}';
+       redirectUrl = 'http://localhost:3000/redirect-url/${paymentRes!.data!.merchantTransactionId}';
        initialisePayment = true;
        setState(() {
          _controller = WebViewController()
@@ -38,6 +38,9 @@ class _PaymentWebViewState extends ConsumerState<PaymentWebView> {
            ..setNavigationDelegate(
              NavigationDelegate(
                onPageFinished: (url) {
+                 if(url == currentUrl){
+                   debugPrint('current URL-----> $url');
+                 }
                  debugPrint('URL-----> $url');
                },
                onNavigationRequest: (NavigationRequest request) {

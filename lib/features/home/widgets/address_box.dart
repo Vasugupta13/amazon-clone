@@ -8,7 +8,7 @@ class AddressBox extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context,WidgetRef ref) {
-    final user = ref.read(userProvider);
+    final user = ref.read(userControllerProvider);
 
     return Container(
       height: 40,

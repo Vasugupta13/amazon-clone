@@ -1,6 +1,7 @@
 import 'package:amazon_clone/common/widgets/loader_widget.dart';
 import 'package:amazon_clone/features/home/services/home_services.dart';
 import 'package:amazon_clone/features/product_details/screens/product_detail_screen.dart';
+import 'package:amazon_clone/model/cart.dart';
 import 'package:amazon_clone/model/product.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,13 +14,14 @@ class DealOfDay extends ConsumerStatefulWidget {
 }
 
 class _DealOfDayState extends ConsumerState<DealOfDay> {
-  Product? product;
+  ProductDetailModel? product;
 
   @override
   void initState() {
     super.initState();
-
-    Future.delayed(const Duration(seconds: 1)).then((value) => fetchDealOfDay());
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp){
+      fetchDealOfDay();
+    });
   }
 
   void fetchDealOfDay() async {
@@ -40,8 +42,6 @@ class _DealOfDayState extends ConsumerState<DealOfDay> {
     return
     product == null
         ? const Loader()
-        : product!.name.isEmpty
-            ? const SizedBox()
             :
             GestureDetector(
                 onTap: navigateToDetailScreen,
@@ -56,7 +56,7 @@ class _DealOfDayState extends ConsumerState<DealOfDay> {
                       ),
                     ),
                     Image.network(
-                      product!.images[0],
+                      product!.images![0],
                       height: 235,
                       fit: BoxFit.fitHeight,
                     ),
@@ -82,7 +82,7 @@ class _DealOfDayState extends ConsumerState<DealOfDay> {
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: product!.images
+                        children: product!.images!
                             .map(
                               (e) => Padding(
                                 padding: const EdgeInsets.all(3.0),

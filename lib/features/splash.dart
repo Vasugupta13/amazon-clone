@@ -19,9 +19,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: 1)).then((value) {
-      ref.read(userControllerProvider).getUserData(context: context).then((value) {
-        final token = ref.read(userProvider).token;
-        final userType = ref.read(userProvider).type;
+      ref.read(authControllerProvider).getUserData(context: context).then((value) {
+        final token = ref.read(userControllerProvider).token;
+        final userType = ref.read(userControllerProvider).type;
         if(token.isEmpty){
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=> const AuthScreen()));
         }else{

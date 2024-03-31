@@ -161,7 +161,7 @@ class _AddressScreenState extends ConsumerState<AddressScreen> {
   }
 
   void onApplePayResult(res) {
-    if (ref.read(userProvider).address.isEmpty) {
+    if (ref.read(userControllerProvider).address.isEmpty) {
       ref.read(addressControllerProvider).saveUserAddress(
           context: context, address: addressToBeUsed);
     }
@@ -173,7 +173,7 @@ class _AddressScreenState extends ConsumerState<AddressScreen> {
   }
 
   void onGooglePayResult(res) {
-    if (ref.read(userProvider).address.isEmpty) {
+    if (ref.read(userControllerProvider).address.isEmpty) {
       ref.read(addressControllerProvider).saveUserAddress(
           context: context, address: addressToBeUsed);
     }
@@ -212,8 +212,8 @@ class _AddressScreenState extends ConsumerState<AddressScreen> {
     // PaymentConfiguration.fromAsset('gpay.json');
     // final Future<PaymentConfiguration> _applePayConfig =
     // PaymentConfiguration.fromAsset('applepay.json');
-    var address = ref.read(userProvider).address;
-    var userId = ref.read(userProvider).id;
+    var address = ref.read(userControllerProvider).address;
+    var userId = ref.read(userControllerProvider).id;
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60),

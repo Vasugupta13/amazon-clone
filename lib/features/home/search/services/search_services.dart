@@ -15,7 +15,7 @@ class SearchServices {
     required BuildContext context,
     required String searchQuery,
   }) async {
-    final provider = ref.watch(userProvider);
+    final provider = ref.watch(userControllerProvider);
     print(provider.token);
     List<Product> productList = [];
     try {

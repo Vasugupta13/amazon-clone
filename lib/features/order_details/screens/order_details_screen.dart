@@ -50,7 +50,7 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.read(userProvider);
+    final user = ref.read(userControllerProvider);
 
     return Scaffold(
       appBar: PreferredSize(

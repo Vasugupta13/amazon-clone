@@ -1,26 +1,18 @@
-import 'package:amazon_clone/common/widgets/custom_button.dart';
 import 'package:amazon_clone/constants/global_variables.dart';
 import 'package:amazon_clone/features/address/screens/address_screen.dart';
 import 'package:amazon_clone/features/cart/widgets/cart_provider.dart';
 import 'package:amazon_clone/features/cart/widgets/cart_subtotal.dart';
 import 'package:amazon_clone/features/home/search/screens/search_screen.dart';
 import 'package:amazon_clone/features/home/widgets/address_box.dart';
-import 'package:amazon_clone/providers/user_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-class CartScreen extends ConsumerStatefulWidget {
+class CartScreen extends StatelessWidget {
   const CartScreen({Key? key}) : super(key: key);
 
-  @override
-  ConsumerState<CartScreen> createState() => _CartScreenState();
-}
-
-class _CartScreenState extends ConsumerState<CartScreen> {
-  void navigateToSearchScreen(String query) {
+  void navigateToSearchScreen(String query,BuildContext context) {
     Navigator.pushNamed(context, SearchScreen.routeName, arguments: query);
   }
 
-  void navigateToAddress(num sum) {
+  void navigateToAddress(num sum, BuildContext context) {
     Navigator.pushNamed(
       context,
       AddressScreen.routeName,
@@ -30,11 +22,6 @@ class _CartScreenState extends ConsumerState<CartScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(userProvider);
-    num sum = 0;
-    user.cart
-        .map((e) => sum += e['quantity'] * e['product']['price'] )
-        .toList();
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60),
@@ -55,7 +42,9 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                     borderRadius: BorderRadius.circular(7),
                     elevation: 1,
                     child: TextFormField(
-                      onFieldSubmitted: navigateToSearchScreen,
+                      onFieldSubmitted: (value){
+                        navigateToSearchScreen(value, context);
+                      },
                       decoration: InputDecoration(
                         prefixIcon: InkWell(
                           onTap: () {},
@@ -108,36 +97,19 @@ class _CartScreenState extends ConsumerState<CartScreen> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            const AddressBox(),
-            const CartSubtotal(),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CustomButton(
-                text: 'Proceed to Buy (${user.cart.length} items)',
-                onTap: () => navigateToAddress(sum),
-                color: Colors.yellow[600],
-              ),
-            ),
-            const SizedBox(height: 15),
-            Container(
-              color: Colors.black12.withOpacity(0.08),
-              height: 1,
-            ),
-            const SizedBox(height: 5),
-            ListView.builder(
-              itemCount: user.cart.length,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return CartProduct(
-                  index: index,
-                );
-              },
-            ),
-          ],
-        ),
+      body: Column(
+        children: [
+          const AddressBox(),
+          const CartSubtotal(),
+
+          const SizedBox(height: 15),
+          Container(
+            color: Colors.black12.withOpacity(0.08),
+            height: 1,
+          ),
+          const SizedBox(height: 5),
+          const CartProduct(),
+        ],
       ),
     );
   }

@@ -48,7 +48,7 @@ class _PostsScreenState extends  ConsumerState<PostsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var token = ref.watch(userProvider).token;
+    var token = ref.watch(userControllerProvider).token;
     print(token);
     return products == null
         ? const Loader()

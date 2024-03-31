@@ -3,8 +3,10 @@ import 'package:amazon_clone/common/widgets/custom_button.dart';
 import 'package:amazon_clone/common/widgets/stars.dart';
 import 'package:amazon_clone/constants/global_variables.dart';
 import 'package:amazon_clone/features/auth/services/auth_service.dart';
+import 'package:amazon_clone/features/cart/services/cart_services.dart';
 import 'package:amazon_clone/features/home/search/screens/search_screen.dart';
 import 'package:amazon_clone/features/product_details/services/product_detail_services.dart';
+import 'package:amazon_clone/model/cart.dart';
 import 'package:amazon_clone/model/product.dart';
 import 'package:amazon_clone/providers/user_provider.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -17,7 +19,7 @@ import 'package:provider/provider.dart';
 
 class ProductDetailScreen extends ConsumerStatefulWidget {
   static const String routeName = '/product-details';
-  final Product product;
+  final ProductDetailModel product;
   const ProductDetailScreen({
     Key? key,
     required this.product,
@@ -35,16 +37,16 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
   void initState() {
     super.initState();
     double totalRating = 0;
-    for (int i = 0; i < widget.product.rating!.length; i++) {
-      totalRating += widget.product.rating![i].rating;
-      if (widget.product.rating![i].userId ==
-          ref.read(userProvider).id) {
-        myRating = widget.product.rating![i].rating;
+    for (int i = 0; i < widget.product.ratings!.length; i++) {
+      totalRating += int.parse(widget.product.ratings![i].rating.toString());
+      if (widget.product.ratings![i].userId ==
+          ref.read(userControllerProvider).id) {
+        myRating = double.parse(widget.product.ratings![i].rating.toString());
       }
     }
 
     if (totalRating != 0) {
-      avgRating = totalRating / widget.product.rating!.length;
+      avgRating = totalRating / widget.product.ratings!.length;
     }
   }
 
@@ -141,7 +143,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    widget.product.id!,
+                    widget.product.sId!,
                   ),
                   Stars(
                     rating: avgRating,
@@ -155,14 +157,14 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                 horizontal: 10,
               ),
               child: Text(
-                widget.product.name,
+                widget.product.name!,
                 style: const TextStyle(
                   fontSize: 15,
                 ),
               ),
             ),
             CarouselSlider(
-              items: widget.product.images.map(
+              items: widget.product.images!.map(
                     (i) {
                   return Builder(
                     builder: (BuildContext context) => Image.network(
@@ -207,7 +209,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text(widget.product.description),
+              child: Text(widget.product.description!),
             ),
             Container(
               color: Colors.black12,
@@ -226,7 +228,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
               child: CustomButton(
                 text: 'Add to Cart',
                 onTap: (){
-                  ref.read(productDetailProvider).addToCart(
+                  ref.read(cartProductController.notifier).addToCart(
                       context: context,
                       product: widget.product
                   );
@@ -261,7 +263,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                 color: GlobalVariables.secondaryColor,
               ),
               onRatingUpdate: (rating) {
-                ref.read(productDetailProvider).rateProduct(context: context, product: widget.product, rate: rating);
+          //      ref.read(productDetailProvider).rateProduct(context: context, product: widget.product, rate: rating);
               },
             ),
           ],

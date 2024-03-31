@@ -19,7 +19,7 @@ class AddressServices {
     required BuildContext context,
     required String address,
   }) async {
-    final provider = _ref.read(userProvider);
+    final provider = _ref.read(userControllerProvider);
     try {
       http.Response res = await http.post(
         Uri.parse('$uri/api/save-user-address'),
@@ -39,7 +39,7 @@ class AddressServices {
           User user = provider.copyWith(
             address: jsonDecode(res.body)['address'],
           );
-          _ref.read(userProvider.notifier).setUserFromModel(user);
+          _ref.read(userControllerProvider.notifier).setUserFromModel(user);
         },
       );
     } catch (e) {
@@ -53,7 +53,7 @@ class AddressServices {
     required String address,
     required num totalSum,
   }) async {
-    final provider = _ref.read(userProvider);
+    final provider = _ref.read(userControllerProvider);
     try {
       http.Response res = await http.post(Uri.parse('$uri/api/order'),
           headers: {
@@ -61,7 +61,7 @@ class AddressServices {
             'x-auth-token': provider.token,
           },
           body: jsonEncode({
-            'cart': provider.cart,
+            'cartItems': provider.cart,
             'address': address,
             'totalPrice': totalSum,
           }));
@@ -74,7 +74,7 @@ class AddressServices {
           User user = provider.copyWith(
             cart: [],
           );
-          _ref.read(userProvider.notifier).setUserFromModel(user);
+          _ref.read(userControllerProvider.notifier).setUserFromModel(user);
         },
       );
     } catch (e) {
@@ -87,7 +87,7 @@ class AddressServices {
     required Product product,
     required VoidCallback onSuccess,
   }) async {
-    final provider = _ref.read(userProvider);
+    final provider = _ref.read(userControllerProvider);
 
     try {
       http.Response res = await http.post(

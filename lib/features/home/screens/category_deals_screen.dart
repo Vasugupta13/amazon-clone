@@ -3,6 +3,7 @@ import 'package:amazon_clone/common/widgets/loader_widget.dart';
 import 'package:amazon_clone/constants/global_variables.dart';
 import 'package:amazon_clone/features/home/services/home_services.dart';
 import 'package:amazon_clone/features/product_details/screens/product_detail_screen.dart';
+import 'package:amazon_clone/model/cart.dart';
 import 'package:amazon_clone/model/product.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,7 +21,7 @@ class CategoryDealsScreen extends ConsumerStatefulWidget{
 }
 
 class _CategoryDealsScreenState extends ConsumerState<CategoryDealsScreen> {
-  List<Product>? productList;
+  List<ProductDetailModel>? productList;
 
   @override
   void initState() {
@@ -104,7 +105,7 @@ class _CategoryDealsScreenState extends ConsumerState<CategoryDealsScreen> {
                           child: Padding(
                             padding: const EdgeInsets.all(10),
                             child: Image.network(
-                              product.images[0],
+                              product.images![0],
                             ),
                           ),
                         ),
@@ -117,7 +118,7 @@ class _CategoryDealsScreenState extends ConsumerState<CategoryDealsScreen> {
                           right: 15,
                         ),
                         child: Text(
-                          product.name,
+                          product.name!,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),

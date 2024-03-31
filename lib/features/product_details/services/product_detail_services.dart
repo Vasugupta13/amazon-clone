@@ -15,43 +15,43 @@ final productDetailProvider = StateProvider((ref) =>
 class ProductDetailsServices {
   final Ref _ref;
   ProductDetailsServices({required Ref ref}) : _ref = ref;
-  void addToCart(
-      {required BuildContext context,
-        required Product product,
-      }) async {
-    final provider = _ref.read(userProvider);
-    try {
-      http.Response res = await http.post(
-        Uri.parse('$uri/api/add-to-cart'),
-        headers: {
-          'Content-Type': 'application/json; charset=UTF-8',
-          'x-auth-token': provider.token
-        },
-        body: jsonEncode(
-          {'id': product.id,},
-        ),
-      );
-      httpErrorHandle(
-          response: res,
-          context: context,
-          onSuccess: () async {
-            User user = _ref.read(userProvider).copyWith(
-              cart: jsonDecode(res.body)["cart"],
-            );
-            print(user);
-            _ref.read(userProvider.notifier).setUserFromModel(user);
-          });
-    } catch (e) {
-      print('Exception during HTTP request: $e');
-      showSnackBar(context, e.toString());
-    }
-  }
+  // void addToCart(
+  //     {required BuildContext context,
+  //       required Product product,
+  //     }) async {
+  //   final provider = _ref.read(userControllerProvider);
+  //   try {
+  //     http.Response res = await http.post(
+  //       Uri.parse('$uri/api/add-to-cart'),
+  //       headers: {
+  //         'Content-Type': 'application/json; charset=UTF-8',
+  //         'x-auth-token': provider.token
+  //       },
+  //       body: jsonEncode(
+  //         {'id': product.id,},
+  //       ),
+  //     );
+  //     httpErrorHandle(
+  //         response: res,
+  //         context: context,
+  //         onSuccess: () async {
+  //           User user = _ref.read(userControllerProvider).copyWith(
+  //             cart: jsonDecode(res.body)["cart"],
+  //           );
+  //           print(user);
+  //           _ref.read(userControllerProvider.notifier).setUserFromModel(user);
+  //         });
+  //   } catch (e) {
+  //     print('Exception during HTTP request: $e');
+  //     showSnackBar(context, e.toString());
+  //   }
+  // }
   void rateProduct(
       {required BuildContext context,
       required Product product,
       required double rate,
       }) async {
-    final provider = _ref.read(userProvider);
+    final provider = _ref.read(userControllerProvider);
     try {
       http.Response res = await http.post(
         Uri.parse('$uri/api/rate-product'),

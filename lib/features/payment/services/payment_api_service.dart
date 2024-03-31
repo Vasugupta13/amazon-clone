@@ -8,7 +8,7 @@ import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:http/http.dart" as http;
 
 final paymentControllerProvider = StateNotifierProvider<PaymentService,CheckStatusState>((ref) {
-  final provider = ref.read(userProvider);
+  final provider = ref.read(userControllerProvider);
   return PaymentService(user: provider);
 });
 

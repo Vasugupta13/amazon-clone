@@ -18,7 +18,7 @@ class AccountServices {
   Future<List<Order>> fetchMyOrders({
     required BuildContext context,
   }) async {
-    final provider = _ref.read(userProvider);
+    final provider = _ref.read(userControllerProvider);
     List<Order> orderList = [];
     try {
       http.Response res =

@@ -1,7 +1,7 @@
 import 'package:amazon_clone/model/user.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final userProvider = StateNotifierProvider<UserProvider,User>((ref) {
+final userControllerProvider = StateNotifierProvider<UserProvider,User>((ref) {
   return UserProvider();
 });
 class UserProvider extends StateNotifier<User> {

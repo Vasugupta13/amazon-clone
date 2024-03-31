@@ -26,7 +26,7 @@ class AdminServices {
     required String category,
     required List<File> images,
   }) async {
-    final provider = _ref.read(userProvider);
+    final provider = _ref.read(userControllerProvider);
 
     try {
       final cloudinary = CloudinaryPublic('deuezzs0l', 'ng32nb7b');
@@ -71,7 +71,7 @@ class AdminServices {
 
   // get all the products
   Future<List<Product>> fetchAllProducts(BuildContext context) async {
-    final provider = _ref.read(userProvider);
+    final provider = _ref.read(userControllerProvider);
     print('saale ${provider.token}');
     List<Product> productList = [];
     try {
@@ -109,7 +109,7 @@ class AdminServices {
     required Product product,
     required VoidCallback onSuccess,
   }) async {
-    final provider = _ref.read(userProvider);
+    final provider = _ref.read(userControllerProvider);
 
     try {
       http.Response res = await http.post(
@@ -136,7 +136,7 @@ class AdminServices {
   }
 
   Future<List<Order>> fetchAllOrders(BuildContext context) async {
-    final provider = _ref.read(userProvider);
+    final provider = _ref.read(userControllerProvider);
     List<Order> orderList = [];
     try {
       http.Response res =
@@ -172,7 +172,7 @@ class AdminServices {
     required Order order,
     required VoidCallback onSuccess,
   }) async {
-    final provider = _ref.read(userProvider);
+    final provider = _ref.read(userControllerProvider);
 
     try {
       http.Response res = await http.post(
@@ -198,7 +198,7 @@ class AdminServices {
   }
 
   Future<Map<String, dynamic>> getEarnings(BuildContext context) async {
-    final provider = _ref.read(userProvider);
+    final provider = _ref.read(userControllerProvider);
     List<Sales> sales = [];
     int totalEarning = 0;
     try {

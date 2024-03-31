@@ -36,12 +36,12 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   }
 
   void signUpUser() {
-     ref.read(userControllerProvider).signUpUser(context: context, email: _emailController.text,
+     ref.read(authControllerProvider).signUpUser(context: context, email: _emailController.text,
       password: _passwordController.text, name: _nameController.text,);
   }
 
   void signInUser() async {
-    await ref.read(userControllerProvider).signInUser(context: context, email: _emailController.text,
+    await ref.read(authControllerProvider).signInUser(context: context, email: _emailController.text,
       password: _passwordController.text,);
 
   }

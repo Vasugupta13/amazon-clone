@@ -1,5 +1,5 @@
-
-import 'package:amazon_clone/providers/user_provider.dart';
+import 'package:amazon_clone/common/widgets/custom_button.dart';
+import 'package:amazon_clone/features/cart/services/cart_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -8,27 +8,36 @@ class CartSubtotal extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context,WidgetRef ref) {
-    final user = ref.watch(userProvider);
-    int sum = 0;
-    user.cart
-        .map((e) => sum += e['quantity'] * e['product']['price'] as int)
-        .toList();
-
+    final cartLength = ref.watch(cartProductController.select((value) => value.cartItems));
+    final total = ref.watch(cartProductController.select((value) => value.total));
     return Container(
       margin: const EdgeInsets.all(10),
-      child: Row(
+      child: Column(
         children: [
-          const Text(
-            'Subtotal ',
-            style: TextStyle(
-              fontSize: 20,
-            ),
+          Row(
+            children: [
+              const Text(
+                'Subtotal ',
+                style: TextStyle(
+                  fontSize: 20,
+                ),
+              ),
+              Text(
+                total.toString(),
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
-          Text(
-            '\$$sum',
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: CustomButton(
+              text: 'Proceed to Buy (${cartLength.length} items)',
+              onTap: (){},
+              //=> navigateToAddress(sum),
+              color: Colors.yellow[600],
             ),
           ),
         ],
