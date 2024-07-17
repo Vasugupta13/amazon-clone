@@ -30,7 +30,7 @@ class PaymentService extends StateNotifier<CheckStatusState>{
     try{
       Map<String, dynamic> bodyData = {
         "id":_userProvider.id,
-        "totalAmount": amount * 100,
+        "totalAmount": amount,
         "fullCart": _cartItems,
         "customerNumber" : number,
         "customerName" : name,

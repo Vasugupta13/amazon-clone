@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:wick_wiorra/common/widgets/bottom_nav.dart';
+import 'package:wick_wiorra/features/admin/screens/admin_screen.dart';
 import 'package:wick_wiorra/providers/user_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -83,8 +84,15 @@ class AuthService {
         if (!context.mounted) {
           return;
         }
-        Navigator.pushNamedAndRemoveUntil(
-            context, BottomNav.routeName, (route) => false);
+        final type = jsonDecode(response.body)['type'];
+        if(type == "admin"){
+          Navigator.pushAndRemoveUntil(
+              context, MaterialPageRoute(builder: (_)=>const AdminScreen()), (route) => false);
+        }else{
+          Navigator.pushNamedAndRemoveUntil(
+              context, BottomNav.routeName, (route) => false);
+        }
+
       }else if(response.statusCode == 400){
         jsonDecode(response.body)['message'];
         showSnackBar(
