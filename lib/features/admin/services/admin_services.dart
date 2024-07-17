@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:amazon_clone/constants/error_handing.dart';
-import 'package:amazon_clone/constants/global_variables.dart';
-import 'package:amazon_clone/constants/utils.dart';
-import 'package:amazon_clone/features/admin/models/sales.dart';
-import 'package:amazon_clone/model/order.dart';
-import 'package:amazon_clone/model/product.dart';
-import 'package:amazon_clone/providers/user_provider.dart';
+import 'package:wick_wiorra/constants/error_handing.dart';
+import 'package:wick_wiorra/constants/global_variables.dart';
+import 'package:wick_wiorra/constants/utils.dart';
+import 'package:wick_wiorra/features/admin/models/sales.dart';
+import 'package:wick_wiorra/model/order.dart';
+import 'package:wick_wiorra/model/product.dart';
+import 'package:wick_wiorra/providers/user_provider.dart';
 import 'package:cloudinary_public/cloudinary_public.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,6 +25,10 @@ class AdminServices {
     required double quantity,
     required String category,
     required List<File> images,
+    required List<dynamic> availableFragrances,
+    required String burnTime,
+    required String netWeight,
+    required String waxType,
   }) async {
     final provider = _ref.read(userControllerProvider);
 
@@ -46,6 +50,10 @@ class AdminServices {
         images: imageUrls,
         category: category,
         price: price,
+        burnTime: burnTime,
+        netWeight: netWeight,
+        waxType: waxType,
+        availableFragrances: availableFragrances,
       );
       http.Response res = await http.post(
         Uri.parse('$uri/admin/add-product'),

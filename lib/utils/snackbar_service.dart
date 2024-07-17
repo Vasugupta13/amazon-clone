@@ -1,4 +1,4 @@
-import 'package:amazon_clone/res/colors.dart';
+
 import 'package:flutter/material.dart';
 
 
@@ -7,10 +7,10 @@ class SnackBarService {
     required BuildContext context,
     required String message,
     required Color backgroundColor,
-    Color textColor = AppColors.white,
+    Color textColor = Colors.white,
     double fontSize = 15,
     FontWeight fontWeight = FontWeight.w400,
-    Duration? duration,
+    Duration duration = const Duration(seconds: 1),
   }) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -19,13 +19,14 @@ class SnackBarService {
           fontSize: fontSize,
           fontWeight: fontWeight,),
 
-        ),
+        ),duration: duration,
         backgroundColor: backgroundColor,
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(15),
               topRight: Radius.circular(15),
-            )),
+            ),
+        ),
       ),
     );
   }

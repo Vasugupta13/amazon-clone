@@ -1,5 +1,5 @@
-import 'package:amazon_clone/constants/global_variables.dart';
-import 'package:amazon_clone/features/home/screens/category_deals_screen.dart';
+import 'package:wick_wiorra/constants/global_variables.dart';
+import 'package:wick_wiorra/features/home/screens/category_deals_screen.dart';
 import 'package:flutter/material.dart';
 
 class TopCategories extends StatelessWidget {
@@ -12,43 +12,52 @@ class TopCategories extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 60,
-      child: ListView.builder(
-        itemCount: GlobalVariables.categoryImages.length,
-        scrollDirection: Axis.horizontal,
-        itemExtent: 75,
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            onTap: () => navigateToCategoryPage(
-              context,
-              GlobalVariables.categoryImages[index]['title']!,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15,vertical:10),
+      child: Row(
+          mainAxisAlignment : MainAxisAlignment.spaceBetween,
+        children : [
+          GestureDetector(
+            onTap: (){navigateToCategoryPage(context, 'Jar Candles');},
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: const CircleAvatar(
+                  radius: 30,
+                  backgroundColor: GlobalVariables.kPrimaryColor,
+                  child: ImageIcon(AssetImage('assets/images/candle.png'),color: GlobalVariables.kPrimaryTextColor,size: 90,)),
             ),
-            child: Column(
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(50),
-                    child: Image.asset(
-                      GlobalVariables.categoryImages[index]['image']!,
-                      fit: BoxFit.cover,
-                      height: 40,
-                      width: 40,
-                    ),
-                  ),
-                ),
-                Text(
-                  GlobalVariables.categoryImages[index]['title']!,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ],
+          ),
+          GestureDetector(
+            onTap: (){navigateToCategoryPage(context, 'Mould Candles');},
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: const CircleAvatar(
+                  radius: 30,
+                  backgroundColor: GlobalVariables.kPrimaryColor,
+                  child: ImageIcon(AssetImage('assets/images/mold_candle.png'),color: GlobalVariables.kPrimaryTextColor,size: 90,)),
             ),
-          );
-        },
+          ),
+          GestureDetector(
+            onTap: (){navigateToCategoryPage(context, 'Small Candles');},
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: const CircleAvatar(
+                  radius: 30,
+                  backgroundColor: GlobalVariables.kPrimaryColor,
+                  child: ImageIcon(AssetImage('assets/images/candles.png'),color: GlobalVariables.kPrimaryTextColor,size: 90,)),
+            ),
+          ),
+          GestureDetector(
+            onTap: (){navigateToCategoryPage(context, 'Wide Jar Candles');},
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: const CircleAvatar(
+                  radius: 30,
+                  backgroundColor: GlobalVariables.kPrimaryColor,
+                  child: ImageIcon(AssetImage('assets/images/wide_jar_candle.png'),color: GlobalVariables.kPrimaryTextColor,size: 90,)),
+            ),
+          ),
+        ],
       ),
     );
   }

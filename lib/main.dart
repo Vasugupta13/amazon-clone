@@ -1,26 +1,26 @@
-import 'package:amazon_clone/common/widgets/bottom_nav.dart';
-import 'package:amazon_clone/constants/global_variables.dart';
-import 'package:amazon_clone/features/admin/screens/admin_screen.dart';
-import 'package:amazon_clone/features/auth/screens/auth_screen.dart';
-import 'package:amazon_clone/features/auth/services/auth_service.dart';
-import 'package:amazon_clone/features/home/screens/home_screen.dart';
-import 'package:amazon_clone/features/splash.dart';
-import 'package:amazon_clone/providers/user_provider.dart';
-import 'package:amazon_clone/router.dart';
+import 'package:wick_wiorra/constants/global_variables.dart';
+import 'package:wick_wiorra/features/splash.dart';
+import 'package:wick_wiorra/router.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
-  runApp(const ProviderScope(
-    child: MyApp(),
-  ));
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]).then((_) {
+    runApp(const ProviderScope(child: MyApp())); // Run app after setting orientation
+  });
 }
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
- State<MyApp> createState() => _MyAppState();
+  State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
@@ -28,15 +28,33 @@ class _MyAppState extends State<MyApp> {
   Widget build(
     BuildContext context,
   ) {
-    // var token = ref.watch(userProvider).user.token;
-    // print('token: $token');
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Amazon Clone',
       theme: ThemeData(
         scaffoldBackgroundColor: GlobalVariables.backgroundColor,
         colorScheme: const ColorScheme.light(
           primary: GlobalVariables.secondaryColor,
+        ),
+        textTheme: TextTheme(
+          headlineMedium: GoogleFonts.albertSans(
+              color: GlobalVariables.kPrimaryTextColor,
+              fontWeight: FontWeight.w600),
+          headlineSmall: GoogleFonts.albertSans(
+              color: GlobalVariables.kPrimaryTextColor,
+              fontWeight: FontWeight.w600),
+          displaySmall: GoogleFonts.albertSans(
+              color: GlobalVariables.kPrimaryTextColor,
+              fontWeight: FontWeight.w700),
+          titleLarge: GoogleFonts.albertSans(
+              color: GlobalVariables.kPrimaryTextColor,
+              fontWeight: FontWeight.w700),
+          titleMedium: GoogleFonts.albertSans(
+              color: GlobalVariables.kPrimaryTextColor,
+              fontWeight: FontWeight.w700),
+          bodyLarge: GoogleFonts.albertSans(
+              color: Colors.black, fontWeight: FontWeight.w700),
+          bodyMedium: GoogleFonts.albertSans(
+              color: Colors.black, fontWeight: FontWeight.w500),
         ),
         appBarTheme: const AppBarTheme(
           elevation: 0,
@@ -48,7 +66,6 @@ class _MyAppState extends State<MyApp> {
       ),
       onGenerateRoute: (settings) => generateRoute(settings),
       home: const SplashScreen(),
-
     );
   }
 }

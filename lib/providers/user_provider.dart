@@ -1,4 +1,4 @@
-import 'package:amazon_clone/model/user.dart';
+import 'package:wick_wiorra/model/user.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final userControllerProvider = StateNotifierProvider<UserProvider,User>((ref) {
@@ -9,11 +9,9 @@ class UserProvider extends StateNotifier<User> {
     name: '',
     password: '',
     id: '',
-    address: '',
     type: '',
     token: '',
     email: '',
-    cart: [],
   ));
 
   void setUser(String user) {

@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:amazon_clone/model/product.dart';
+import 'package:wick_wiorra/model/product.dart';
 
 class Order {
   final String id;

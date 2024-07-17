@@ -1,13 +1,13 @@
-import 'package:amazon_clone/common/widgets/bottom_nav.dart';
-import 'package:amazon_clone/features/address/screens/address_screen.dart';
-import 'package:amazon_clone/features/auth/screens/auth_screen.dart';
-import 'package:amazon_clone/features/home/screens/category_deals_screen.dart';
-import 'package:amazon_clone/features/home/screens/home_screen.dart';
-import 'package:amazon_clone/features/home/search/screens/search_screen.dart';
-import 'package:amazon_clone/features/order_details/screens/order_details_screen.dart';
-import 'package:amazon_clone/features/product_details/screens/product_detail_screen.dart';
-import 'package:amazon_clone/model/cart.dart';
-import 'package:amazon_clone/model/order.dart';
+import 'package:wick_wiorra/common/widgets/bottom_nav.dart';
+import 'package:wick_wiorra/features/address/screens/address_screen.dart';
+import 'package:wick_wiorra/features/auth/screens/auth_screen.dart';
+import 'package:wick_wiorra/features/home/screens/category_deals_screen.dart';
+import 'package:wick_wiorra/features/home/screens/home_screen.dart';
+import 'package:wick_wiorra/features/home/search/screens/search_screen.dart';
+import 'package:wick_wiorra/features/order_details/screens/order_details_screen.dart';
+import 'package:wick_wiorra/features/product_details/screens/product_detail_screen.dart';
+import 'package:wick_wiorra/model/cart.dart';
+import 'package:wick_wiorra/model/order.dart';
 import 'package:flutter/material.dart';
 
 Route<dynamic> generateRoute(RouteSettings routeSettings) {
@@ -37,10 +37,9 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
         builder: (_) => const BottomNav(),
       );
     case SearchScreen.routeName:
-      var searchQuery = routeSettings.arguments as String;
       return MaterialPageRoute(
         settings: routeSettings,
-        builder: (_) => SearchScreen(searchQuery: searchQuery,),
+        builder: (_) => const SearchScreen(),
       );
     case CategoryDealsScreen.routeName:
       var category = routeSettings.arguments as String;

@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:amazon_clone/model/rating.dart';
+import 'package:wick_wiorra/model/rating.dart';
 
 class Product {
   final String name;
@@ -11,6 +11,10 @@ class Product {
   final double price;
   final String? id;
   final List<Rating>? rating;
+  final List<dynamic> availableFragrances;
+  final String burnTime;
+  final String netWeight;
+  final String waxType;
   Product(
       {required this.name,
       required this.description,
@@ -18,6 +22,10 @@ class Product {
       required this.images,
       required this.category,
       required this.price,
+      required this.burnTime,
+      required this.netWeight,
+      required this.waxType,
+        required this.availableFragrances,
       this.id,
       this.rating,
       });
@@ -32,6 +40,10 @@ class Product {
       'price': price,
       'id': id,
       'rating': rating,
+      'burnTime':burnTime,
+      'netWeight':netWeight,
+      'waxType':waxType,
+      'availableFragrances':availableFragrances,
     };
   }
 
@@ -51,6 +63,10 @@ class Product {
         ),
       )
           : null,
+      burnTime: map['burnTime'] ?? '0',
+      netWeight: map['netWeight'] ?? '100',
+      waxType: map['waxType'] ?? "Soy Wax",
+      availableFragrances: List<String>.from(map['availableFragrances']),
     );
   }
   String toJson() => jsonEncode(toMap());

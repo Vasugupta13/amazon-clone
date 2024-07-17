@@ -24,26 +24,35 @@ class CartItemModel {
 }
 
 class ProductDetailModel {
+  String? id;
   String? name;
   String? description;
   int? price;
   List<String>? images;
   int? quantity;
   String? category;
-  List<Ratings>? ratings;
-  String? sId;
+  String? waxType;
+  String? burnTime;
+  List<String>? availableFragrances;
+  String? netWeight;
+  List<dynamic>? ratings;
   int? iV;
 
-  ProductDetailModel(
-      {this.name,
-        this.description,
-        this.price,
-        this.images,
-        this.quantity,
-        this.category,
-        this.ratings,
-        this.sId,
-        this.iV});
+
+  ProductDetailModel.name(
+      this.id,
+      this.name,
+      this.description,
+      this.price,
+      this.images,
+      this.quantity,
+      this.category,
+      this.waxType,
+      this.burnTime,
+      this.availableFragrances,
+      this.netWeight,
+      this.ratings,
+      this.iV);
 
   ProductDetailModel.fromJson(Map<String, dynamic> json) {
     name = json['name'];
@@ -58,8 +67,12 @@ class ProductDetailModel {
         ratings!.add(Ratings.fromJson(v));
       });
     }
-    sId = json['_id'];
+    id = json['_id'];
     iV = json['__v'];
+    waxType = json['waxType'];
+    burnTime = json['burnTime'];
+    availableFragrances = json['availableFragrances'].cast<String>();
+    netWeight = json['netWeight'];
   }
 
   Map<String, dynamic> toJson() {
@@ -73,8 +86,9 @@ class ProductDetailModel {
     if (ratings != null) {
       data['ratings'] = ratings!.map((v) => v.toJson()).toList();
     }
-    data['_id'] = sId;
+    data['_id'] = id;
     data['__v'] = iV;
+    data['availableFragrances'] = availableFragrances;
     return data;
   }
 }

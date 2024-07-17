@@ -1,5 +1,5 @@
-import 'package:amazon_clone/constants/global_variables.dart';
-import 'package:carousel_slider/carousel_slider.dart';
+import 'package:wick_wiorra/constants/global_variables.dart';
+import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
 
 class CarouselImage extends StatelessWidget {
@@ -7,21 +7,15 @@ class CarouselImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CarouselSlider(
-      items: GlobalVariables.carouselImages.map(
-        (i) {
-          return Builder(
-            builder: (BuildContext context) => Image.network(
-              i,
-              fit: BoxFit.cover,
-              height: 200,
-            ),
-          );
+    return SizedBox(
+      height: 270,
+      child: Swiper(
+        itemCount: GlobalVariables.carouselImages.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Image.asset(GlobalVariables.carouselImages[index],height: 300,);
         },
-      ).toList(),
-      options: CarouselOptions(
-        viewportFraction: 1,
-        height: 200,
+        scale: 0.9,
+        autoplay: true,
       ),
     );
   }

@@ -1,10 +1,10 @@
 import 'dart:io';
-import 'package:amazon_clone/common/widgets/custom_button.dart';
-import 'package:amazon_clone/common/widgets/custom_textfiled.dart';
-import 'package:amazon_clone/constants/global_variables.dart';
-import 'package:amazon_clone/constants/utils.dart';
-import 'package:amazon_clone/features/admin/services/admin_services.dart';
-import 'package:amazon_clone/providers/user_provider.dart';
+import 'package:wick_wiorra/common/widgets/custom_button.dart';
+import 'package:wick_wiorra/common/widgets/custom_textfiled.dart';
+import 'package:wick_wiorra/constants/global_variables.dart';
+import 'package:wick_wiorra/constants/utils.dart';
+import 'package:wick_wiorra/features/admin/services/admin_services.dart';
+import 'package:wick_wiorra/providers/user_provider.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
@@ -19,12 +19,16 @@ class AddProductScreen extends ConsumerStatefulWidget {
 }
 
 class _AddProductScreenState extends ConsumerState<AddProductScreen> {
+
   final TextEditingController productNameController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
   final TextEditingController quantityController = TextEditingController();
+  final TextEditingController netWeightController = TextEditingController();
+  final TextEditingController burnTimeController = TextEditingController();
 
-  String category = 'Mobiles';
+  String? category;
+  String? waxType;
   List<File> images = [];
   final _addProductFormKey = GlobalKey<FormState>();
 
@@ -38,13 +42,61 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
   }
 
   List<String> productCategories = [
-    'Mobiles',
-    'Essentials',
-    'Appliances',
-    'Books',
-    'Fashion'
+    'Jar Candles',
+    'Mould Candles',
+    'Wide Jar Candles',
+    'Small Candles',
   ];
-
+  List<String> waxTypeList = [
+    'Soy Wax',
+    'Paraffin Wax',
+    'Beeswax',
+    'Palm Wax',
+    'Carnauba Wax',
+  ];
+  List checkListItems = [
+    {
+      "value": false,
+      "title": "Wild Lavender",
+    },
+    {
+      "value": false,
+      "title": "Holiday Cheer",
+    },
+    {
+      "value": false,
+      "title": "Sweet Caramel",
+    },
+    {
+      "value": false,
+      "title": "Hot Coffee",
+    },
+    {
+      "value": false,
+      "title": "Berry Blast",
+    },
+    {
+      "value": false,
+      "title": "Ocean Waves",
+    },
+    {
+      "value": false,
+      "title": "Coffee",
+    },
+    {
+      "value": false,
+      "title": "Rose",
+    },
+    {
+      "value": false,
+      "title": "Cinnamon",
+    },
+    {
+      "value": false,
+      "title": "Ocean Breeze",
+    },
+  ];
+  List multipleSelected = [];
   void sellProduct() {
     if (_addProductFormKey.currentState!.validate() && images.isNotEmpty) {
       ref.read(adminControllerProvider).sellProduct(
@@ -53,8 +105,12 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
         description: descriptionController.text,
         price: double.parse(priceController.text),
         quantity: double.parse(quantityController.text),
-        category: category,
+        category: category!,
         images: images,
+        availableFragrances: multipleSelected,
+        burnTime: burnTimeController.text,
+        netWeight: netWeightController.text,
+        waxType: waxType!,
       );
     }
   }
@@ -159,32 +215,135 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                 CustomTextField(
                   controller: priceController,
                   hintText: 'Price',
+                  keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 10),
                 CustomTextField(
                   controller: quantityController,
                   hintText: 'Quantity',
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 10),
+                CustomTextField(
+                  controller: burnTimeController,
+                  hintText: 'Burn Time in minutes',
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 10),
+                CustomTextField(
+                  controller: netWeightController,
+                  hintText: 'Net Weight in grams',
+                  keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 10),
                 SizedBox(
                   width: double.infinity,
-                  child: DropdownButton(
-                    value: category,
-                    icon: const Icon(Icons.keyboard_arrow_down),
-                    items: productCategories.map((String item) {
-                      return DropdownMenuItem(
-                        value: item,
-                        child: Text(item),
-                      );
-                    }).toList(),
-                    onChanged: (String? newVal) {
-                      setState(() {
-                        category = newVal!;
-                      });
-                    },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.black38, width: 1),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton(
+                        hint: Text('Select Candle type',style: TextStyle(fontWeight: FontWeight.w400,color: Colors.grey.shade500),),
+
+                        value: category,
+                        icon: const Icon(Icons.keyboard_arrow_down),
+                        items: productCategories.map((String item) {
+                          return DropdownMenuItem(
+                            value: item,
+                            child: Text(item),
+                          );
+                        }).toList(),
+                        onChanged: (String? newVal) {
+                          setState(() {
+                            category = newVal!;
+                          });
+                        },
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 10),
+                SizedBox(
+                  width: double.infinity,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10,),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.black38, width: 1),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton(
+                        hint: Text('Select Wax type',style: TextStyle(fontWeight: FontWeight.w400,color: Colors.grey.shade500),),
+                        value: waxType,
+                        icon: const Icon(Icons.keyboard_arrow_down),
+                        items: waxTypeList.map((String item) {
+                          return DropdownMenuItem(
+                            value: item,
+                            child: Text(item),
+                          );
+                        }).toList(),
+                        onChanged: (String? newVal) {
+                          setState(() {
+                            waxType = newVal!;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 15),
+                    const Text('Select Fragrances',style: TextStyle(fontWeight: FontWeight.w400,color: Colors.black,fontSize: 16),),
+                    GridView.count(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisCount: 2,
+                      childAspectRatio:5,
+                      padding: EdgeInsets.zero,
+                      children: List.generate(
+                        checkListItems.length,
+                            (index) => CheckboxListTile(
+                          controlAffinity: ListTileControlAffinity.leading,
+                          contentPadding: EdgeInsets.zero,
+                          dense: true,
+                          title: Text(
+                            checkListItems[index]["title"],
+                            style: const TextStyle(
+                              fontSize: 16.0,
+                              color: Colors.black,
+                            ),
+                          ),
+                          value: checkListItems[index]["value"],
+                          onChanged: (value) {
+                            setState(() {
+                              checkListItems[index]["value"] = value;
+                              if (multipleSelected.contains(checkListItems[index]['title'])) {
+                                multipleSelected.remove(checkListItems[index]["title"]);
+                              } else {
+                                multipleSelected.add(checkListItems[index]["title"]);
+                              }
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    Text(
+                      multipleSelected.isEmpty ? "" : multipleSelected.toString(),
+                      style: const TextStyle(
+                        fontSize: 22.0,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
                 CustomButton(
                   text: 'Sell',
                   onTap:() {

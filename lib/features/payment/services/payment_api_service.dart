@@ -1,25 +1,43 @@
 import "dart:convert";
-import "package:amazon_clone/constants/global_variables.dart";
-import "package:amazon_clone/features/payment/model/check_status_model.dart";
-import "package:amazon_clone/features/payment/model/payment_initiate_response_model.dart";
-import "package:amazon_clone/model/user.dart";
-import "package:amazon_clone/providers/user_provider.dart";
+import "package:wick_wiorra/constants/global_variables.dart";
+import "package:wick_wiorra/features/cart/services/cart_services.dart";
+import "package:wick_wiorra/features/payment/model/check_status_model.dart";
+import "package:wick_wiorra/features/payment/model/payment_initiate_response_model.dart";
+import "package:wick_wiorra/model/cart.dart";
+import "package:wick_wiorra/model/user.dart";
+import "package:wick_wiorra/providers/user_provider.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:http/http.dart" as http;
 
 final paymentControllerProvider = StateNotifierProvider<PaymentService,CheckStatusState>((ref) {
   final provider = ref.read(userControllerProvider);
-  return PaymentService(user: provider);
+  final cart = ref.read(cartProductController.select((value) => value.cartItems));
+  return PaymentService(user: provider, cartItems: cart);
 });
 
 class PaymentService extends StateNotifier<CheckStatusState>{
   final User _userProvider;
-  PaymentService({required User user}) : _userProvider = user,super(CheckStatusState());
-  Future<PaymentRequestResponse> initiatePayment (num amount) async {
+  final List<CartItemModel> _cartItems;
+  PaymentService({required User user,required List<CartItemModel> cartItems}) : _userProvider = user, _cartItems = cartItems ,super(CheckStatusState());
+  Future<PaymentRequestResponse> initiatePayment (
+      {required num amount,
+      required String addressLine,
+      required String name,
+      required String number,
+      required String city,
+      required String town,
+      required String pincode}) async {
     try{
       Map<String, dynamic> bodyData = {
         "id":_userProvider.id,
-        "amount":amount
+        "totalAmount": amount * 100,
+        "fullCart": _cartItems,
+        "customerNumber" : number,
+        "customerName" : name,
+        "customerAddressLine" : addressLine,
+        "customerCity" : city,
+        "customerState" : town,
+        "customerPincode" : pincode,
       };
       http.Response response = await http.post(
         Uri.parse('$uri/pay'),

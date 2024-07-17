@@ -1,12 +1,11 @@
 import 'dart:convert';
-import 'package:amazon_clone/common/widgets/bottom_nav.dart';
-import 'package:amazon_clone/providers/user_provider.dart';
+import 'package:wick_wiorra/common/widgets/bottom_nav.dart';
+import 'package:wick_wiorra/providers/user_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:amazon_clone/constants/error_handing.dart';
-import 'package:amazon_clone/constants/global_variables.dart';
-import 'package:amazon_clone/constants/utils.dart';
-import 'package:amazon_clone/model/user.dart';
+import 'package:wick_wiorra/constants/global_variables.dart';
+import 'package:wick_wiorra/constants/utils.dart';
+import 'package:wick_wiorra/model/user.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 final authControllerProvider = Provider((ref) => AuthService(ref: ref));
@@ -25,11 +24,9 @@ class AuthService {
           name: name,
           password: password,
           id: '',
-          address: '',
-          type: '',
+          type: 'user',
           token: '',
-          email: email,
-          cart: []);
+          email: email,);
       http.Response response = await http.post(
         Uri.parse('$uri/admin/signup'),
         body: user.toJson(),
@@ -40,18 +37,21 @@ class AuthService {
       if (!context.mounted) {
         return;
       }
-      httpErrorHandle(
-          response: response,
-          context: context,
-          onSuccess: () async {
-            showSnackBar(
-              context,
-              'Account created! Please login to continue',
-            );
-          });
+      if(response.statusCode == 200) {
+        showSnackBar(
+          context,
+          'Account created! Please login to continue',
+        );
+      }else if(response.statusCode == 400){
+        jsonDecode(response.body)['message'];
+        showSnackBar(
+          context,
+          jsonDecode(response.body)['message'],
+        );
+      }
     } catch (e) {
       debugPrint('$e');
-      showSnackBar(context, e.toString());
+      showSnackBar(context, "Unable to Sign Up currently!");
     }
   }
 
@@ -68,33 +68,33 @@ class AuthService {
           'Content-Type': 'application/json; charset=UTF-8',
         },
       );
-      if (!context.mounted) {
-        return;
+      if(response.statusCode == 200){
+        showSnackBar(
+          context,
+          'Sign in successful!',
+        );
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        if (!context.mounted) {
+          return;
+        }
+        _ref.read(userControllerProvider.notifier).setUser(response.body);
+        await prefs.setString(
+            'x-auth-token', jsonDecode(response.body)['token']);
+        if (!context.mounted) {
+          return;
+        }
+        Navigator.pushNamedAndRemoveUntil(
+            context, BottomNav.routeName, (route) => false);
+      }else if(response.statusCode == 400){
+        jsonDecode(response.body)['message'];
+        showSnackBar(
+          context,
+          jsonDecode(response.body)['message'],
+        );
       }
-      httpErrorHandle(
-          response: response,
-          context: context,
-          onSuccess: () async {
-            showSnackBar(
-              context,
-              'Sign in successful!',
-            );
-            SharedPreferences prefs = await SharedPreferences.getInstance();
-            if (!context.mounted) {
-              return;
-            }
-            _ref.read(userControllerProvider.notifier).setUser(response.body);
-            await prefs.setString(
-                'x-auth-token', jsonDecode(response.body)['token']);
-            if (!context.mounted) {
-              return;
-            }
-            Navigator.pushNamedAndRemoveUntil(
-                context, BottomNav.routeName, (route) => false);
-          });
     } catch (e) {
       debugPrint('$e');
-      showSnackBar(context, e.toString());
+      showSnackBar(context, "Unable to Sign in currently!");
     }
   }
 
@@ -105,7 +105,6 @@ class AuthService {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('x-auth-token');
-      print(token);
       if (token == null) {
         prefs.setString('x-auth-token', '');
       }
@@ -118,7 +117,6 @@ class AuthService {
       );
 
       var response = jsonDecode(tokenRes.body);
-      print(response);
       if (response == true) {
         http.Response userRes = await http.get(
           Uri.parse("$uri/"),
@@ -134,10 +132,6 @@ class AuthService {
       }
     } catch (e) {
       debugPrint('$e');
-      if (!context.mounted) {
-        return;
-      }
-      showSnackBar(context, e.toString());
     }
   }
 }

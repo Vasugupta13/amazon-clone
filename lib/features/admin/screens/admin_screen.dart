@@ -1,17 +1,19 @@
-import 'package:amazon_clone/constants/global_variables.dart';
-import 'package:amazon_clone/features/admin/screens/analtyics_screen.dart';
-import 'package:amazon_clone/features/admin/screens/orders_screen.dart';
-import 'package:amazon_clone/features/admin/screens/posts_screen.dart';
+import 'package:wick_wiorra/constants/global_variables.dart';
+import 'package:wick_wiorra/features/account/controller/account_controller.dart';
+import 'package:wick_wiorra/features/admin/screens/analtyics_screen.dart';
+import 'package:wick_wiorra/features/admin/screens/orders_screen.dart';
+import 'package:wick_wiorra/features/admin/screens/posts_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AdminScreen extends StatefulWidget {
+class AdminScreen extends ConsumerStatefulWidget {
   const AdminScreen({Key? key}) : super(key: key);
 
   @override
-  State<AdminScreen> createState() => _AdminScreenState();
+  ConsumerState<AdminScreen> createState() => _AdminScreenState();
 }
 
-class _AdminScreenState extends State<AdminScreen> {
+class _AdminScreenState extends ConsumerState<AdminScreen> {
   int _page = 0;
   double bottomBarWidth = 42;
   double bottomBarBorderWidth = 5;
@@ -36,28 +38,30 @@ class _AdminScreenState extends State<AdminScreen> {
         child: AppBar(
           flexibleSpace: Container(
             decoration: const BoxDecoration(
-              gradient: GlobalVariables.appBarGradient,
+             color: GlobalVariables.kPrimaryColor
             ),
           ),
           title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
                 alignment: Alignment.topLeft,
-                child: Image.asset(
-                  'assets/images/amazon_in.png',
-                  width: 120,
-                  height: 45,
-                  color: Colors.black,
-                ),
+                child:    Text('Wick & Wiorra',style: Theme.of(context).textTheme.headlineSmall,)
               ),
+              const Expanded(child: SizedBox()),
               const Text(
                 'Admin',
                 style: TextStyle(
+                  fontSize: 16,
                   color: Colors.black,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w400,
                 ),
-              )
+              ),
+              const SizedBox(width: 10,),
+              InkWell(
+                onTap: (){
+                  ref.read(accountControllerProvider.notifier).logOut(context);
+                },
+                  child: const Icon(Icons.logout_rounded,color: Colors.redAccent,))
             ],
           ),
         ),

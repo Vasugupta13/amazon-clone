@@ -1,12 +1,11 @@
-
-import 'package:amazon_clone/common/widgets/loader_widget.dart';
-import 'package:amazon_clone/constants/global_variables.dart';
-import 'package:amazon_clone/features/home/services/home_services.dart';
-import 'package:amazon_clone/features/product_details/screens/product_detail_screen.dart';
-import 'package:amazon_clone/model/cart.dart';
-import 'package:amazon_clone/model/product.dart';
+import 'package:wick_wiorra/constants/global_variables.dart';
+import 'package:wick_wiorra/features/cart/services/cart_services.dart';
+import 'package:wick_wiorra/features/home/services/home_services.dart';
+import 'package:wick_wiorra/features/product_details/screens/product_detail_screen.dart';
+import 'package:wick_wiorra/model/cart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class CategoryDealsScreen extends ConsumerStatefulWidget{
   static const String routeName = '/category-deals';
@@ -21,42 +20,33 @@ class CategoryDealsScreen extends ConsumerStatefulWidget{
 }
 
 class _CategoryDealsScreenState extends ConsumerState<CategoryDealsScreen> {
-  List<ProductDetailModel>? productList;
 
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 1)).then((value) => fetchCategoryProducts());
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp){
+      ref.read(homeServiceProvider.notifier).fetchCategoryProducts(context: context, category: widget.category);
+    });
   }
-  fetchCategoryProducts() async {
-    productList = await ref.read(homeServiceProvider).fetchCategoryProducts(
-      context: context,
-      category: widget.category,
-    );
-    setState(() {});
+  void navigateToProductDetails(ProductDetailModel product) {
+    Navigator.pushNamed(context, ProductDetailScreen.routeName,arguments: product);
   }
   @override
   Widget build(BuildContext context) {
+    final products = ref.watch(homeServiceProvider.select((value) => value.categoryProductsList));
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(50),
-        child: AppBar(
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: GlobalVariables.appBarGradient,
+      appBar: AppBar(
+        title: Column(
+          children: [
+            Row(
+              children: [
+                Text(widget.category,style: Theme.of(context).textTheme.headlineSmall,)
+              ],
             ),
-          ),
-          title: Text(
-            widget.category,
-            style: const TextStyle(
-              color: Colors.black,
-            ),
-          ),
+          ],
         ),
       ),
-      body: productList == null
-          ? const Loader()
-          : Column(
+      body: Column(
         children: [
           Container(
             padding:
@@ -64,70 +54,81 @@ class _CategoryDealsScreenState extends ConsumerState<CategoryDealsScreen> {
             alignment: Alignment.topLeft,
             child: Text(
               'Keep shopping for ${widget.category}',
-              style: const TextStyle(
-                fontSize: 20,
+              style: GoogleFonts.inter(
+                fontSize: 16,
+                fontWeight:FontWeight.w600
               ),
             ),
           ),
-          SizedBox(
-            height: 170,
-            child: GridView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.only(left: 15),
-              itemCount: productList!.length,
-              gridDelegate:
-              const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 1,
-                childAspectRatio: 1.4,
-                mainAxisSpacing: 10,
-              ),
-              itemBuilder: (context, index) {
-                final product = productList![index];
-                return GestureDetector(
-                  onTap: () {
-                   Navigator.pushNamed(
-                     context,
-                     ProductDetailScreen.routeName,
-                     arguments: product,
-                   );
+          GridView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 15,
+                childAspectRatio: 0.65,
+                crossAxisSpacing: 4
+            ),
+            itemCount: products.length,
+            itemBuilder: (context,index){
+              return Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: GestureDetector(
+                  onTap: (){
+                    navigateToProductDetails(products[index]);
                   },
                   child: Column(
                     children: [
-                      SizedBox(
-                        height: 130,
-                        child: DecoratedBox(
+                      Expanded(
+                        flex:12,
+                        child: Container(
                           decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Colors.black12,
-                              width: 0.5,
-                            ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: Image.network(
-                              product.images![0],
+                            borderRadius: BorderRadius.circular(6),
+                            color: Colors.white,
+                            image:  DecorationImage(
+                                image: NetworkImage(products[index].images![0]),fit: BoxFit.cover
                             ),
                           ),
                         ),
                       ),
-                      Container(
-                        alignment: Alignment.topLeft,
-                        padding: const EdgeInsets.only(
-                          left: 0,
-                          top: 5,
-                          right: 15,
-                        ),
-                        child: Text(
-                          product.name!,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                      Row(
+                        children: [
+                          Expanded(child: Text(products[index].name!,style: Theme.of(context).textTheme.bodyMedium,maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text('${products[index].netWeight!} gms',style: GoogleFonts.albertSans(fontSize:12,fontWeight:FontWeight.w600,color:Colors.grey.shade500)),
+                        ],
+                      ),
+                      Expanded(
+                        flex:2,
+                        child: Row(
+                          children: [
+                            Text("₹ ${products[index].price!}",style: Theme.of(context).textTheme.bodyLarge,),
+                          ],
                         ),
                       ),
+                      Expanded(
+                        flex:2,
+                        child: GestureDetector(
+                          onTap: (){
+                            ref.read(cartProductController.notifier).addToCart(
+                              context: context,
+                              product: products[index],);
+                          },
+                          child: Container(decoration: BoxDecoration(
+                            color: GlobalVariables.kPrimaryTextColor,
+                            borderRadius: BorderRadius.circular(10),
+                          ),child: Center(child: Text("Add to Cart",style: GoogleFonts.albertSans(color:GlobalVariables.kPrimaryColor,fontSize:14,fontWeight:FontWeight.w600),)),
+                          ),
+                        ),
+                      )
                     ],
                   ),
-                );
-              },
-            ),
+                ),
+              );
+            },
           ),
         ],
       ),

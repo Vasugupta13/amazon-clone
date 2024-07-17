@@ -1,20 +1,16 @@
-
-import 'package:amazon_clone/common/widgets/loader_widget.dart';
-import 'package:amazon_clone/constants/global_variables.dart';
-import 'package:amazon_clone/features/home/search/services/search_services.dart';
-import 'package:amazon_clone/features/home/search/widget/search_widget.dart';
-import 'package:amazon_clone/features/home/widgets/address_box.dart';
-import 'package:amazon_clone/features/product_details/screens/product_detail_screen.dart';
-import 'package:amazon_clone/model/product.dart';
+import 'package:wick_wiorra/constants/global_variables.dart';
+import 'package:wick_wiorra/features/home/search/services/search_services.dart';
+import 'package:wick_wiorra/features/home/search/widget/search_widget.dart';
+import 'package:wick_wiorra/features/product_details/screens/product_detail_screen.dart';
+import 'package:wick_wiorra/model/cart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
   static const String routeName = '/search-screen';
-  final String searchQuery;
   const SearchScreen({
     Key? key,
-    required this.searchQuery,
   }) : super(key: key);
 
   @override
@@ -22,23 +18,16 @@ class SearchScreen extends ConsumerStatefulWidget {
 }
 
 class _SearchScreenState extends ConsumerState<SearchScreen> {
-  List<Product>? products;
-  final SearchServices searchServices = SearchServices();
+  List<ProductDetailModel>? products;
 
-  @override
-  void initState() {
-    super.initState();
-    Future.delayed(Duration(seconds: 1)).then((value) =>  fetchSearchedProduct());
-  }
-
-  fetchSearchedProduct() async {
-    products = await searchServices.fetchSearchedProducts(
-        context: context, searchQuery: widget.searchQuery, ref: ref);
+  fetchSearchedProduct(String query) async {
+    products = await ref.read(searchControllerProvider).fetchSearchedProducts(
+        context: context, searchQuery: query,);
     setState(() {});
   }
 
-  void navigateToSearchScreen(String query) {
-    Navigator.pushNamed(context, SearchScreen.routeName, arguments: query);
+  void navigateToProductDetails(ProductDetailModel product) {
+    Navigator.pushNamed(context, ProductDetailScreen.routeName,arguments: product);
   }
 
   @override
@@ -47,40 +36,34 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60),
         child: AppBar(
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: GlobalVariables.appBarGradient,
-            ),
-          ),
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: Container(
+                child: SizedBox(
                   height: 42,
-                  margin: const EdgeInsets.only(left: 15),
                   child: Material(
                     borderRadius: BorderRadius.circular(7),
                     elevation: 1,
                     child: TextFormField(
-                      onFieldSubmitted: navigateToSearchScreen,
+                      onChanged: (query){
+                        if(query.isEmpty){
+                          
+                         }else{
+                          fetchSearchedProduct(query);
+                        }
+
+                      },
+                      cursorColor: GlobalVariables.kPrimaryTextColor,
+                      style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 14,
+                          color: Colors.black
+                      ),
                       decoration: InputDecoration(
-                        prefixIcon: InkWell(
-                          onTap: () {},
-                          child: const Padding(
-                            padding: EdgeInsets.only(
-                              left: 6,
-                            ),
-                            child: Icon(
-                              Icons.search,
-                              color: Colors.black,
-                              size: 23,
-                            ),
-                          ),
-                        ),
                         filled: true,
                         fillColor: Colors.white,
-                        contentPadding: const EdgeInsets.only(top: 10),
+                        contentPadding: const EdgeInsets.only(top: 10,left: 10),
                         border: const OutlineInputBorder(
                           borderRadius: BorderRadius.all(
                             Radius.circular(7),
@@ -92,50 +75,54 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                             Radius.circular(7),
                           ),
                           borderSide: BorderSide(
-                            color: Colors.black38,
+                            color: GlobalVariables.kPrimaryTextColor,
                             width: 1,
                           ),
                         ),
-                        hintText: 'Search Amazon.in',
-                        hintStyle: const TextStyle(
+                        focusedBorder: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(7),
+                          ),
+                          borderSide: BorderSide(
+                            color: GlobalVariables.kPrimaryTextColor,
+                            width: 1.4,
+                          ),
+                        ),
+                        hintText: 'Search candles....',
+                        hintStyle: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
-                          fontSize: 17,
+                          fontSize: 14,
+                          color:Colors.grey.shade300
                         ),
                       ),
                     ),
                   ),
                 ),
               ),
-              Container(
-                color: Colors.transparent,
-                height: 42,
-                margin: const EdgeInsets.symmetric(horizontal: 10),
-                child: const Icon(Icons.mic, color: Colors.black, size: 25),
-              ),
             ],
           ),
         ),
       ),
       body: products == null
-          ? const Loader()
+          ? Center(child: Text("Search for candles...",style: GoogleFonts.poppins(color: Colors.grey.shade400,fontSize: 16,fontWeight: FontWeight.w500),))
           : Column(
         children: [
-          const AddressBox(),
           const SizedBox(height: 10),
           Expanded(
             child: ListView.builder(
               itemCount: products!.length,
               itemBuilder: (context, index) {
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(
-                      context,
-                      ProductDetailScreen.routeName,
-                      arguments: products![index],
-                    );
-                  },
-                  child: SearchedProduct(
-                    product: products![index],
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Material(
+                    child: InkWell(
+                      onTap: () {
+                        navigateToProductDetails(products![index]);
+                      },
+                      child: SearchedProduct(
+                        product: products![index],
+                      ),
+                    ),
                   ),
                 );
               },

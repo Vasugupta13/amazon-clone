@@ -1,9 +1,9 @@
 
-import 'package:amazon_clone/common/widgets/loader_widget.dart';
-import 'package:amazon_clone/features/account/widgets/single_product.dart';
-import 'package:amazon_clone/features/admin/services/admin_services.dart';
-import 'package:amazon_clone/features/order_details/screens/order_details_screen.dart';
-import 'package:amazon_clone/model/order.dart';
+import 'package:wick_wiorra/common/widgets/loader_widget.dart';
+import 'package:wick_wiorra/features/account/views/widgets/admin_single_product.dart';
+import 'package:wick_wiorra/features/admin/services/admin_services.dart';
+import 'package:wick_wiorra/features/order_details/screens/order_details_screen.dart';
+import 'package:wick_wiorra/model/order.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

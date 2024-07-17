@@ -1,11 +1,11 @@
 import 'dart:convert';
-import 'package:amazon_clone/constants/error_handing.dart';
-import 'package:amazon_clone/constants/global_variables.dart';
-import 'package:amazon_clone/constants/utils.dart';
-import 'package:amazon_clone/model/cart.dart';
-import 'package:amazon_clone/model/product.dart';
-import 'package:amazon_clone/model/user.dart';
-import 'package:amazon_clone/providers/user_provider.dart';
+import 'package:wick_wiorra/constants/error_handing.dart';
+import 'package:wick_wiorra/constants/global_variables.dart';
+import 'package:wick_wiorra/constants/utils.dart';
+import 'package:wick_wiorra/model/cart.dart';
+import 'package:wick_wiorra/model/user.dart';
+import 'package:wick_wiorra/providers/user_provider.dart';
+import 'package:wick_wiorra/utils/snackbar_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
@@ -23,7 +23,7 @@ class CartServices extends StateNotifier<CartState> {
         super(CartState(
           cartItems: [],
         ));
-  void addToCart({
+  Future<void> addToCart({
     required BuildContext context,
     required ProductDetailModel product,
   }) async {
@@ -36,7 +36,7 @@ class CartServices extends StateNotifier<CartState> {
         },
         body: jsonEncode(
           {
-            'id': product.sId,
+            'id': product.id,
           },
         ),
       );
@@ -45,13 +45,13 @@ class CartServices extends StateNotifier<CartState> {
         context: context,
         onSuccess: () {
           final cartItem = jsonDecode(res.body)["products"];
-          print(cartItem);
           List<CartItemModel>? cartItems = [];
           if(res.statusCode == 200){
             for(var i in cartItem){
               cartItems.add(CartItemModel.fromJson(i));
             }
             state = state.copyWith(cartItems:cartItems,loading: false,total: _calculateTotal(items: cartItems));
+            SnackBarService.showSnackBar(message: "Item added to cart!", context: context, backgroundColor: Colors.white,textColor: GlobalVariables.kPrimaryTextColor,duration: Duration(milliseconds: 500));
           }else{
             state = state.copyWith(loading: false);
           }
@@ -77,7 +77,7 @@ class CartServices extends StateNotifier<CartState> {
         },
         body: jsonEncode(
           {
-            'id': product.sId,
+            'id': product.id,
           },
         ),
       );
@@ -86,7 +86,6 @@ class CartServices extends StateNotifier<CartState> {
         context: context,
         onSuccess: () {
           final cartItem = jsonDecode(res.body)["products"];
-          print(cartItem);
           List<CartItemModel>? cartItems = [];
           if(res.statusCode == 200){
             for(var i in cartItem){
@@ -118,7 +117,6 @@ class CartServices extends StateNotifier<CartState> {
         },
       );
       final cartItem = jsonDecode(res.body)["products"];
-      print(cartItem);
       List<CartItemModel> cartItems = [];
       if(res.statusCode == 200){
         for(var i in cartItem){

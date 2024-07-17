@@ -1,9 +1,10 @@
-import 'package:amazon_clone/common/widgets/custom_button.dart';
-import 'package:amazon_clone/common/widgets/custom_textfiled.dart';
-import 'package:amazon_clone/constants/global_variables.dart';
-import 'package:amazon_clone/features/auth/services/auth_service.dart';
+import 'package:wick_wiorra/common/widgets/custom_textfiled.dart';
+import 'package:wick_wiorra/constants/global_variables.dart';
+import 'package:wick_wiorra/constants/utils.dart';
+import 'package:wick_wiorra/features/auth/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 enum Auth {
   signin,
@@ -36,51 +37,91 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   }
 
   void signUpUser() {
-     ref.read(authControllerProvider).signUpUser(context: context, email: _emailController.text,
-      password: _passwordController.text, name: _nameController.text,);
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+    final name = _nameController.text.trim();
+
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+
+    if (!emailRegex.hasMatch(email)) {
+      showSnackBar(context, "Please enter a valid email address.");
+      return;
+    }
+
+    if (password.length <= 8) {
+      showSnackBar(context, "Password must be more than 8 characters.");
+      return;
+    }
+
+    ref.read(authControllerProvider).signUpUser(
+      context: context,
+      email: email,
+      password: password,
+      name: name,
+    );
   }
 
   void signInUser() async {
-    await ref.read(authControllerProvider).signInUser(context: context, email: _emailController.text,
-      password: _passwordController.text,);
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
 
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+
+    if (!emailRegex.hasMatch(email)) {
+      showSnackBar(context, "Please enter a valid email address.");
+      return;
+    }
+
+    if (password.length <= 8) {
+      showSnackBar(context, "Password must be more than 8 characters.");
+      return;
+    }
+
+    await ref.read(authControllerProvider).signInUser(
+      context: context,
+      email: email,
+      password: password,
+    );
   }
 
   @override
   Widget build(BuildContext context,) {
     return Scaffold(
-      backgroundColor: GlobalVariables.greyBackgroundCOlor,
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: Column(
+          children: [
+            Row(
+              children: [
+                Text('Wick & Wiorra',style: Theme.of(context).textTheme.headlineMedium,)
+              ],
+            ),
+          ],
+        ),
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Welcome',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
               ListTile(
                 tileColor: _auth == Auth.signup
                     ? GlobalVariables.backgroundColor
-                    : GlobalVariables.greyBackgroundCOlor,
+                    : GlobalVariables.kPrimaryColor,
                 title: const Text(
-                  'Create Account',
+                  'Sign-Up',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 leading: Radio(
-                  activeColor: GlobalVariables.secondaryColor,
+                  activeColor: GlobalVariables.kPrimaryTextColor,
                   value: Auth.signup,
                   groupValue: _auth,
                   onChanged: (Auth? val) {
                     setState(() {
                       _auth = val!;
-                      print(_auth);
                     });
                   },
                 ),
@@ -108,15 +149,30 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                           hintText: 'Password',
                         ),
                         const SizedBox(height: 10),
-                        CustomButton(
-                          color: GlobalVariables.secondaryColor,
-                          text: 'Sign Up',
+                        GestureDetector(
                           onTap: () {
                             if (_signUpFormKey.currentState!.validate()) {
-                               signUpUser();
+                              signUpUser();
                             }
                           },
-                        )
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: GlobalVariables.kPrimaryTextColor,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Center(
+                                  child: Text(
+                                    "Sign Up",
+                                    style: GoogleFonts.albertSans(
+                                        color: GlobalVariables.kPrimaryColor,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600),
+                                  )),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -124,7 +180,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
               ListTile(
                 tileColor: _auth == Auth.signin
                     ? GlobalVariables.backgroundColor
-                    : GlobalVariables.greyBackgroundCOlor,
+                    : GlobalVariables.kPrimaryColor,
                 title: const Text(
                   'Sign-In.',
                   style: TextStyle(
@@ -132,7 +188,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                   ),
                 ),
                 leading: Radio(
-                  activeColor: GlobalVariables.secondaryColor,
+                  activeColor: GlobalVariables.kPrimaryTextColor,
                   value: Auth.signin,
                   groupValue: _auth,
                   onChanged: (Auth? val) {
@@ -160,15 +216,30 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                           hintText: 'Password',
                         ),
                         const SizedBox(height: 10),
-                        CustomButton(
-                          color: GlobalVariables.secondaryColor,
-                          text: 'Sign In',
+                        GestureDetector(
                           onTap: () {
                             if (_signInFormKey.currentState!.validate()) {
-                               signInUser();
+                              signInUser();
                             }
                           },
-                        )
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: GlobalVariables.kPrimaryTextColor,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Center(
+                                  child: Text(
+                                    "Sign In",
+                                    style: GoogleFonts.albertSans(
+                                        color: GlobalVariables.kPrimaryColor,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600),
+                                  )),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),

@@ -1,21 +1,11 @@
-
-import 'package:amazon_clone/common/widgets/custom_button.dart';
-import 'package:amazon_clone/common/widgets/stars.dart';
-import 'package:amazon_clone/constants/global_variables.dart';
-import 'package:amazon_clone/features/auth/services/auth_service.dart';
-import 'package:amazon_clone/features/cart/services/cart_services.dart';
-import 'package:amazon_clone/features/home/search/screens/search_screen.dart';
-import 'package:amazon_clone/features/product_details/services/product_detail_services.dart';
-import 'package:amazon_clone/model/cart.dart';
-import 'package:amazon_clone/model/product.dart';
-import 'package:amazon_clone/providers/user_provider.dart';
-import 'package:carousel_slider/carousel_slider.dart';
+import 'package:wick_wiorra/constants/global_variables.dart';
+import 'package:wick_wiorra/features/cart/services/cart_services.dart';
+import 'package:wick_wiorra/features/home/search/screens/search_screen.dart';
+import 'package:wick_wiorra/model/cart.dart';
+import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
-
-
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ProductDetailScreen extends ConsumerStatefulWidget {
   static const String routeName = '/product-details';
@@ -26,247 +16,219 @@ class ProductDetailScreen extends ConsumerStatefulWidget {
   }) : super(key: key);
 
   @override
-  ConsumerState<ProductDetailScreen> createState() => _ProductDetailScreenState();
+  ConsumerState<ProductDetailScreen> createState() =>
+      _ProductDetailScreenState();
 }
 
 class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
-  double avgRating = 0;
-  double myRating = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    double totalRating = 0;
-    for (int i = 0; i < widget.product.ratings!.length; i++) {
-      totalRating += int.parse(widget.product.ratings![i].rating.toString());
-      if (widget.product.ratings![i].userId ==
-          ref.read(userControllerProvider).id) {
-        myRating = double.parse(widget.product.ratings![i].rating.toString());
-      }
-    }
-
-    if (totalRating != 0) {
-      avgRating = totalRating / widget.product.ratings!.length;
-    }
-  }
-
   void navigateToSearchScreen(String query) {
     Navigator.pushNamed(context, SearchScreen.routeName, arguments: query);
   }
-
-  void addToCart() {
-
-  }
+   String selectedFragrance= '';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
-        child: AppBar(
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: GlobalVariables.appBarGradient,
-            ),
-          ),
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Container(
-                  height: 42,
-                  margin: const EdgeInsets.only(left: 15),
-                  child: Material(
-                    borderRadius: BorderRadius.circular(7),
-                    elevation: 1,
-                    child: TextFormField(
-                      onFieldSubmitted: navigateToSearchScreen,
-                      decoration: InputDecoration(
-                        prefixIcon: InkWell(
-                          onTap: () {},
-                          child: const Padding(
-                            padding: EdgeInsets.only(
-                              left: 6,
-                            ),
-                            child: Icon(
-                              Icons.search,
-                              color: Colors.black,
-                              size: 23,
-                            ),
-                          ),
-                        ),
-                        filled: true,
-                        fillColor: Colors.white,
-                        contentPadding: const EdgeInsets.only(top: 10),
-                        border: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(7),
-                          ),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(7),
-                          ),
-                          borderSide: BorderSide(
-                            color: Colors.black38,
-                            width: 1,
-                          ),
-                        ),
-                        hintText: 'Search Amazon.in',
-                        hintStyle: const TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 17,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Container(
-                color: Colors.transparent,
-                height: 42,
-                margin: const EdgeInsets.symmetric(horizontal: 10),
-                child: const Icon(Icons.mic, color: Colors.black, size: 25),
-              ),
-            ],
-          ),
-        ),
+      appBar: AppBar(
+        backgroundColor: GlobalVariables.kPrimaryTextColor,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(
+              height: 400,
+              child: Hero(
+                tag: widget.product.id!,
+                child: Swiper(
+                  pagination: const SwiperPagination(
+                      builder: DotSwiperPaginationBuilder(
+                          color: GlobalVariables.kPrimaryColor,
+                          activeColor: GlobalVariables.kPrimaryTextColor,
+                          size: 10.0,
+                          activeSize: 12.0)),
+                  itemCount: widget.product.images!.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Image.network(
+                      widget.product.images![index],
+                      fit: BoxFit.fill,
+                    );
+                  },
+                  scale: 0.9,
+                  autoplay: false,
+                  indicatorLayout: PageIndicatorLayout.SCALE,
+                ),
+              ),
+            ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    widget.product.sId!,
+                  const SizedBox(
+                    height: 10,
                   ),
-                  Stars(
-                    rating: avgRating,
+                  Text(
+                    widget.product.name!,
+                    style: const TextStyle(
+                      fontSize: 18,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 7,
+                  ),
+                  Text(
+                    "MRP inclusive of all taxes",
+                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                  ),
+                  Text(
+                    "₹ ${widget.product.price}",
+                    style: const TextStyle(
+                      fontSize: 18,
+                    ),
                   ),
                 ],
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 20,
-                horizontal: 10,
-              ),
+              padding: const EdgeInsets.all(8.0),
               child: Text(
-                widget.product.name!,
-                style: const TextStyle(
-                  fontSize: 15,
-                ),
+                "Select fragrance",
+                style: Theme.of(context).textTheme.titleLarge,
               ),
-            ),
-            CarouselSlider(
-              items: widget.product.images!.map(
-                    (i) {
-                  return Builder(
-                    builder: (BuildContext context) => Image.network(
-                      i,
-                      fit: BoxFit.contain,
-                      height: 200,
-                    ),
-                  );
-                },
-              ).toList(),
-              options: CarouselOptions(
-                viewportFraction: 1,
-                height: 300,
-              ),
-            ),
-            Container(
-              color: Colors.black12,
-              height: 5,
             ),
             Padding(
-              padding: const EdgeInsets.all(8),
-              child: RichText(
-                text: TextSpan(
-                  text: 'Deal Price: ',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  children: [
-                    TextSpan(
-                      text: '\$${widget.product.price}',
-                      style: const TextStyle(
-                        fontSize: 22,
-                        color: Colors.red,
-                        fontWeight: FontWeight.w500,
+              padding: const EdgeInsets.symmetric(vertical: 4,horizontal: 8),
+              child: Wrap(
+                spacing: 8.0, // gap between adjacent chips
+                runSpacing: 8.0, // gap between lines
+                children: widget.product.availableFragrances!.map((String fragrance) {
+                  return GestureDetector(
+                    onTap: (){
+                      setState(() {
+                        selectedFragrance = fragrance;
+                      });
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color:selectedFragrance != fragrance ? GlobalVariables.kPrimaryColor : GlobalVariables.kPrimaryTextColor,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: GlobalVariables.kPrimaryTextColor,width: 1)
+                      ),child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 3,horizontal: 10),
+                        child: Text(fragrance,style:  TextStyle(fontSize: 12,fontWeight: FontWeight.w400,color: selectedFragrance != fragrance ? GlobalVariables.kPrimaryTextColor : GlobalVariables.kPrimaryColor ),),
                       ),
                     ),
-                  ],
-                ),
+                  );
+                }).toList(),
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text(widget.product.description!),
-            ),
-            Container(
-              color: Colors.black12,
-              height: 5,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: CustomButton(
-                text: 'Buy Now',
-                onTap: () {},
-                color: Colors.orange,
+              child: Text(
+                "Product Details",
+                style: Theme.of(context).textTheme.titleLarge,
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(10),
-              child: CustomButton(
-                text: 'Add to Cart',
-                onTap: (){
-                  ref.read(cartProductController.notifier).addToCart(
-                      context: context,
-                      product: widget.product
-                  );
+              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+              child: Table(
+                border: TableBorder(
+                    horizontalInside: const BorderSide(color: Colors.black),
+                    verticalInside: const BorderSide(color: Colors.black),
+                    top: const BorderSide(color: Colors.black),
+                    bottom: const BorderSide(color: Colors.black),
+                    right: const BorderSide(color: Colors.black),
+                    left: const BorderSide(color: Colors.black),
+                    borderRadius: BorderRadius.circular(4)),
+                columnWidths: const {
+                  0: FlexColumnWidth(1),
+                  1: FlexColumnWidth(2),
                 },
-                color: const Color.fromRGBO(254, 216, 19, 1),
+                children: [
+                  TableRow(
+                    children: [
+                      const Padding(
+                        padding:
+                            EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+                        child: Text("Net weight",style: TextStyle(fontSize: 12),),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 6, horizontal: 10),
+                        child: Text("${widget.product.netWeight} gms",style: const TextStyle(fontSize: 12),),
+                      ),
+                    ],
+                  ),
+                  TableRow(
+                    children: [
+                      const Padding(
+                        padding:
+                            EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+                        child: Text("Burn Time",style: TextStyle(fontSize: 12),),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 6, horizontal: 10),
+                        child: Text("${widget.product.burnTime} minutes",style: const TextStyle(fontSize: 12),),
+                      ),
+                    ],
+                  ),
+                  TableRow(
+                    children: [
+                      const Padding(
+                        padding:
+                            EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+                        child: Text("Wax Type",style: TextStyle(fontSize: 12),),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 6, horizontal: 10),
+                        child: Text("${widget.product.waxType}",style: const TextStyle(fontSize: 12),),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                widget.product.description!,
+                style: GoogleFonts.inter(fontWeight: FontWeight.w500),
               ),
             ),
             const SizedBox(height: 10),
-            Container(
-              color: Colors.black12,
-              height: 5,
-            ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.0),
-              child: Text(
-                'Rate The Product',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            RatingBar.builder(
-              initialRating: myRating,
-              minRating: 1,
-              direction: Axis.horizontal,
-              allowHalfRating: true,
-              itemCount: 5,
-              itemPadding: const EdgeInsets.symmetric(horizontal: 4),
-              itemBuilder: (context, _) => const Icon(
-                Icons.star,
-                color: GlobalVariables.secondaryColor,
-              ),
-              onRatingUpdate: (rating) {
-          //      ref.read(productDetailProvider).rateProduct(context: context, product: widget.product, rate: rating);
-              },
-            ),
           ],
+        ),
+      ),
+      bottomNavigationBar: Container(
+        height: 60,
+        padding: const EdgeInsets.all(10),
+        child: GestureDetector(
+          onTap: () {
+            ref.read(cartProductController.notifier).addToCart(
+                  context: context,
+                  product: widget.product,
+                );
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              color: GlobalVariables.kPrimaryTextColor,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Center(
+                child: Text(
+              "Add to Cart",
+              style: GoogleFonts.albertSans(
+                  color: GlobalVariables.kPrimaryColor,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600),
+            )),
+          ),
         ),
       ),
     );

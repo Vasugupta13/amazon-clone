@@ -1,6 +1,6 @@
-import 'package:amazon_clone/common/widgets/loader_widget.dart';
-import 'package:amazon_clone/features/admin/models/sales.dart';
-import 'package:amazon_clone/features/admin/widgets/category_products_chart.dart';
+import 'package:wick_wiorra/common/widgets/loader_widget.dart';
+import 'package:wick_wiorra/features/admin/models/sales.dart';
+import 'package:wick_wiorra/features/admin/widgets/category_products_chart.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

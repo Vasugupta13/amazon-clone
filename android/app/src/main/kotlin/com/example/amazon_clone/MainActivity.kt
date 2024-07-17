@@ -1,4 +1,4 @@
-package com.example.amazon_clone
+package com.example.wick_wiorra
 
 import io.flutter.embedding.android.FlutterActivity
 

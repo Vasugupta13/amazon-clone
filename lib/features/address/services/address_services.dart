@@ -1,84 +1,109 @@
 import 'dart:convert';
-import 'package:amazon_clone/constants/error_handing.dart';
-import 'package:amazon_clone/constants/global_variables.dart';
-import 'package:amazon_clone/constants/utils.dart';
-import 'package:amazon_clone/model/product.dart';
-import 'package:amazon_clone/model/user.dart';
-import 'package:amazon_clone/providers/user_provider.dart';
+import 'package:wick_wiorra/constants/error_handing.dart';
+import 'package:wick_wiorra/constants/global_variables.dart';
+import 'package:wick_wiorra/constants/utils.dart';
+import 'package:wick_wiorra/model/address.dart';
+import 'package:wick_wiorra/model/product.dart';
+import 'package:wick_wiorra/model/user.dart';
+import 'package:wick_wiorra/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
-final addressControllerProvider = Provider((ref) {
- return AddressServices(ref: ref);});
+final addressControllerProvider =
+    StateNotifierProvider<AddressServices, AddressState>((ref) {
+  final userProvider = ref.watch(userControllerProvider);
+  return AddressServices(userProvider: userProvider, ref: ref);
+});
 
-class AddressServices {
+class AddressServices extends StateNotifier<AddressState> {
   final Ref _ref;
-  AddressServices({required Ref ref}) : _ref = ref;
+  final User _userProvider;
+  AddressServices({required User userProvider, required Ref ref})
+      : _userProvider = userProvider,
+        _ref = ref,
+        super(AddressState(addressList: []));
   void saveUserAddress({
     required BuildContext context,
-    required String address,
+    required String addressLine,
+    required String city,
+    required String addressState,
+    required String pincode,
+    required String name,
+    required String userNumber,
   }) async {
-    final provider = _ref.read(userControllerProvider);
+    if (state.loading) {
+      return;
+    }
+    state = state.copyWith(loading: true);
     try {
       http.Response res = await http.post(
-        Uri.parse('$uri/api/save-user-address'),
+        Uri.parse('$uri/api/add-address'),
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
-          'x-auth-token': provider.token,
+          'x-auth-token': _userProvider.token,
         },
         body: jsonEncode({
-          'address': address,
+          'addressLine': addressLine,
+          "city": city,
+          "state": addressState,
+          "pincode": pincode,
+          "name": name,
+          "userNumber": userNumber
         }),
       );
-
+      List<AddressList> addressList = [];
       httpErrorHandle(
         response: res,
         context: context,
         onSuccess: () {
-          User user = provider.copyWith(
-            address: jsonDecode(res.body)['address'],
-          );
-          _ref.read(userControllerProvider.notifier).setUserFromModel(user);
+          final jsonResponse = jsonDecode(res.body);
+          final address = jsonResponse["addressList"];
+          for (var i in address) {
+            addressList.add(AddressList.fromMap(i));
+          }
+          state = state.copyWith(loading: false, addressList: addressList);
+          Navigator.pop(context);
         },
       );
     } catch (e) {
+      state = state.copyWith(loading: false);
       showSnackBar(context, e.toString());
     }
   }
 
-  // get all the products
-  Future<void> placeOrder({
+  Future<void> getAddress({
     required BuildContext context,
-    required String address,
-    required num totalSum,
   }) async {
-    final provider = _ref.read(userControllerProvider);
+    if (state.loading) {
+      return;
+    }
+    state = state.copyWith(loading: true);
     try {
-      http.Response res = await http.post(Uri.parse('$uri/api/order'),
-          headers: {
-            'Content-Type': 'application/json; charset=UTF-8',
-            'x-auth-token': provider.token,
-          },
-          body: jsonEncode({
-            'cartItems': provider.cart,
-            'address': address,
-            'totalPrice': totalSum,
-          }));
-
+      http.Response res = await http.get(
+        Uri.parse('$uri/api/get-all-address'),
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'x-auth-token': _userProvider.token,
+        },
+      );
+      List<AddressList> addressList = [];
       httpErrorHandle(
         response: res,
         context: context,
         onSuccess: () {
-          showSnackBar(context, 'Your order has been placed!');
-          User user = provider.copyWith(
-            cart: [],
-          );
-          _ref.read(userControllerProvider.notifier).setUserFromModel(user);
+          final jsonResponse = jsonDecode(res.body);
+          final address = jsonResponse["addressList"];
+          for (var i in address) {
+            addressList.add(AddressList.fromMap(i));
+          }
+          state = state.copyWith(loading: false, addressList: addressList);
         },
       );
     } catch (e) {
-      showSnackBar(context, e.toString());
+      state = state.copyWith(loading: false,);
+    //  showSnackBar(context, e.toString());
+      return Future.error(e);
     }
   }
 
@@ -111,5 +136,33 @@ class AddressServices {
     } catch (e) {
       showSnackBar(context, e.toString());
     }
+  }
+
+  void selectAddress(int index) {
+    state = state.copyWith(selectedAddress: index);
+  }
+}
+
+class AddressState {
+  final bool loading;
+  final List<AddressList> addressList;
+  final int selectedAddress;
+
+  AddressState({
+    this.loading = false,
+    required this.addressList,
+    this.selectedAddress = 0,
+  });
+
+  AddressState copyWith({
+    bool? loading,
+    List<AddressList>? addressList,
+    int? selectedAddress,
+  }) {
+    return AddressState(
+      loading: loading ?? this.loading,
+      addressList: addressList ?? this.addressList,
+      selectedAddress: selectedAddress ?? this.selectedAddress,
+    );
   }
 }

@@ -1,4 +1,4 @@
-# amazon_clone
+# wick_wiorra
 
 A new Flutter project.
 
