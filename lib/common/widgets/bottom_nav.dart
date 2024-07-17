@@ -74,7 +74,6 @@ class _BottomNavState extends ConsumerState<BottomNav> {
               badgeContent: Consumer(
               builder: (context, watch, child) {
                 final product =  watch.watch(cartProductController.select((value) => value.cartItems));
-             //  print(cart.cartItems.length);
                  return Text('${product.length}');
                 },
               ),

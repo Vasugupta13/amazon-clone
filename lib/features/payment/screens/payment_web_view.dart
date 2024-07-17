@@ -124,7 +124,6 @@ class _PaymentWebViewState extends ConsumerState<PaymentWebView> {
   void initState() {
     initAsync();
     super.initState();
-    print(widget.name);
   }
 
   @override

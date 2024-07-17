@@ -71,7 +71,6 @@ class HomeServices extends StateNotifier<HomeState> {
         'Content-Type': 'application/json; charset=UTF-8',
         'x-auth-token': _userRepo.token,
       });
-      print(res.body);
         httpErrorHandle(
           response: res,
           context: context,

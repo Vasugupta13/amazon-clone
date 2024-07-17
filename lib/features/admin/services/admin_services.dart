@@ -80,7 +80,6 @@ class AdminServices {
   // get all the products
   Future<List<Product>> fetchAllProducts(BuildContext context) async {
     final provider = _ref.read(userControllerProvider);
-    print('saale ${provider.token}');
     List<Product> productList = [];
     try {
       http.Response res =
@@ -105,10 +104,8 @@ class AdminServices {
         },
       );
     } catch (e) {
-      print(e);
       showSnackBar(context, e.toString());
     }
-    print(productList);
     return productList;
   }
 
