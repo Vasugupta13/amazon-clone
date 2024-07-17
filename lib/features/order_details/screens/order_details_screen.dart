@@ -164,9 +164,10 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
                   ),
                 ),
                 child: Stepper(
+                  physics: const NeverScrollableScrollPhysics(),
                   currentStep: currentStep,
                   controlsBuilder: (context, details) {
-                    if (user.type == 'admin' && currentStep > 4) {
+                    if (user.type == 'admin' && currentStep < 3) {
                       return CustomButton(
                         color: GlobalVariables.kPrimaryTextColor,
                         text: 'Done',
