@@ -19,125 +19,129 @@ class CartItemView extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Image.network(
-            products!.images![0],
-            fit: BoxFit.contain,
-            height: 120,
-            width: 120,
+          Expanded(
+            flex: 5,
+            child: Image.network(
+              products!.images![0],
+              fit: BoxFit.contain,
+              height: 120,
+              width: 120,
+            ),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Text(
+          SizedBox(width: 10,),
+          Expanded(
+            flex: 10,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
                   products!.name!,
                   style: const TextStyle(
                       fontSize: 16, color: GlobalVariables.kPrimaryTextColor),
-                  maxLines: 2,
+                  maxLines: 1,overflow: TextOverflow.ellipsis,
                 ),
-              ),
-              Container(
-                width: 235,
-                padding: const EdgeInsets.only(left: 10, top: 5),
-                child: Text(
-                  '₹ ${products!.price}',
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+                Container(
+                  width: 235,
+                  padding: const EdgeInsets.only(top: 5),
+                  child: Text(
+                    '₹ ${products!.price}',
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 2,
                   ),
-                  maxLines: 2,
                 ),
-              ),
-              Container(
-                padding: const EdgeInsets.only(left: 10, top: 5),
-                child: const Text(
-                  'In Stock',
-                  style: TextStyle(
-                    color: Colors.teal,
+                Container(
+                  padding: const EdgeInsets.only(top: 5),
+                  child: const Text(
+                    'In Stock',
+                    style: TextStyle(
+                      color: Colors.teal,
+                    ),
+                    maxLines: 2,
                   ),
-                  maxLines: 2,
                 ),
-              ),
-              Consumer(
-                builder: (context, ref, _) {
-                  return Container(
-                    margin: const EdgeInsets.all(10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: GlobalVariables.kPrimaryTextColor,
-                              width: 1.5,
-                            ),
-                            borderRadius: BorderRadius.circular(5),
-                            color: GlobalVariables.kLightPrimaryTextColor,
-                          ),
-                          child: Row(
-                            children: [
-                              InkWell(
-                                onTap: () {
-                                  ref
-                                      .read(cartProductController.notifier)
-                                      .removeFromCart(
-                                        context: context,
-                                        product: products!,
-                                      );
-                                },
-                                child: const Padding(
-                                  padding: EdgeInsets.all(2.0),
-                                  child: Icon(
-                                    Icons.remove,
-                                    size: 18,
-                                    color: GlobalVariables.kPrimaryTextColor,
-                                  ),
-                                ),
+                Consumer(
+                  builder: (context, ref, _) {
+                    return Container(
+                      margin: const EdgeInsets.symmetric(vertical: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: GlobalVariables.kPrimaryTextColor,
+                                width: 1.5,
                               ),
-                              DecoratedBox(
-                                decoration: BoxDecoration(
-                                  color: GlobalVariables.kPrimaryColor,
-                                  borderRadius: BorderRadius.circular(0),
-                                ),
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 6),
-                                    child: Text(
-                                      quantity.toString(),
+                              borderRadius: BorderRadius.circular(5),
+                              color: GlobalVariables.kLightPrimaryTextColor,
+                            ),
+                            child: Row(
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    ref
+                                        .read(cartProductController.notifier)
+                                        .removeFromCart(
+                                          context: context,
+                                          product: products!,
+                                        );
+                                  },
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(2.0),
+                                    child: Icon(
+                                      Icons.remove,
+                                      size: 18,
+                                      color: GlobalVariables.kPrimaryTextColor,
                                     ),
                                   ),
                                 ),
-                              ),
-                              InkWell(
-                                onTap: () {
-                                  ref
-                                      .read(cartProductController.notifier)
-                                      .addToCart(
-                                        context: context,
-                                        product: products!,
-                                      );
-                                },
-                                child: const Padding(
-                                  padding: EdgeInsets.all(2.0),
-                                  child: Icon(
-                                    Icons.add,
-                                    size: 18,
-                                    color: GlobalVariables.kPrimaryTextColor,
+                                DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    color: GlobalVariables.kPrimaryColor,
+                                    borderRadius: BorderRadius.circular(0),
+                                  ),
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 6),
+                                      child: Text(
+                                        quantity.toString(),
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                                InkWell(
+                                  onTap: () {
+                                    ref
+                                        .read(cartProductController.notifier)
+                                        .addToCart(
+                                          context: context,
+                                          product: products!,
+                                        );
+                                  },
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(2.0),
+                                    child: Icon(
+                                      Icons.add,
+                                      size: 18,
+                                      color: GlobalVariables.kPrimaryTextColor,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ],
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ],
       ),
