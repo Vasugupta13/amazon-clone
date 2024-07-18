@@ -24,7 +24,7 @@ Wick & Wiorra is an E-commerce candle shopping app developed using Flutter for t
 
 - Flutter SDK: [Install Flutter](https://flutter.dev/docs/get-started/install)
 - NodeJs: [Install NodeJs](https://nodejs.org/)
-- PhonePe Developer Account (for payment integration)
+- PhonePe Api Integration - (https://developer.phonepe.com/v1/docs/api-integration-1/)
 
 ### Steps
 
